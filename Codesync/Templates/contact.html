@@ -1,0 +1,710 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Contact Us {% endblock title %}
+{% block css %}
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .contact-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .contact-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            height: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        .office-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(88, 166, 255, 0.1);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .office-card:hover .office-image {
+            background: linear-gradient(135deg, var(--accent) 0%, #388bfd 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .faq-header:hover {
+            background-color: rgba(88, 166, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .faq-header:hover .faq-icon {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .contact-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .form-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .form-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+        }
+
+        .form-control {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-select {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-select:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .office-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .office-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+        }
+
+        .office-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .office-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .office-address {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .faq-item {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-header:hover {
+            background-color: rgba(88, 166, 255, 0.05);
+        }
+
+        .faq-question {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .faq-icon {
+            color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: none;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--bg-tertiary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .response-time {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .response-time h6 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .response-time p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .form-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'features' %}">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog' %}">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">Get in Touch</h1>
+            <p class="hero-subtitle">
+                Have questions about CodeSync AI? Need technical support? We're here to help you succeed.
+            </p>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>All systems operational</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Methods -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="section-title">How Can We Help?</h2>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4 class="contact-title">Technical Support</h4>
+                        <p class="contact-description">
+                            Get help with technical issues, integrations, and troubleshooting.
+                        </p>
+                        <div class="contact-info">
+                            <a href="mailto:support@codesync.ai" style="color: var(--accent); text-decoration: none;">
+                                support@codesync.ai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h4 class="contact-title">Sales & Pricing</h4>
+                        <p class="contact-description">
+                            Questions about plans, pricing, or enterprise solutions.
+                        </p>
+                        <div class="contact-info">
+                            <a href="mailto:sales@codesync.ai" style="color: var(--accent); text-decoration: none;">
+                                sales@codesync.ai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h4 class="contact-title">Partnerships</h4>
+                        <p class="contact-description">
+                            Interested in partnering with us or integrating with CodeSync AI?
+                        </p>
+                        <div class="contact-info">
+                            <a href="mailto:partnerships@codesync.ai" style="color: var(--accent); text-decoration: none;">
+                                partnerships@codesync.ai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h4 class="contact-title">Press & Media</h4>
+                        <p class="contact-description">
+                            Media inquiries, press releases, and brand assets.
+                        </p>
+                        <div class="contact-info">
+                            <a href="mailto:press@codesync.ai" style="color: var(--accent); text-decoration: none;">
+                                press@codesync.ai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="form-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <h2 class="section-title">Send Us a Message</h2>
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Your Name *" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" placeholder="Your Email *" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Company Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" required>
+                                        <option value="">Select Topic *</option>
+                                        <option value="technical">Technical Support</option>
+                                        <option value="billing">Billing & Pricing</option>
+                                        <option value="feature">Feature Request</option>
+                                        <option value="bug">Bug Report</option>
+                                        <option value="partnership">Partnership</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control" placeholder="Subject *" required>
+
+                            <textarea class="form-control" rows="6" placeholder="Your Message *" required></textarea>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="newsletter">
+                                <label class="form-check-label" for="newsletter" style="color: var(--text-secondary);">
+                                    Subscribe to our newsletter for product updates and coding tips
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+
+                            <div class="response-time">
+                                <h6><i class="fas fa-clock me-2"></i>Response Time</h6>
+                                <p>We typically respond within 24 hours on business days</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Office Locations -->
+    <section class="office-section">
+        <div class="container">
+            <h2 class="section-title">Our Locations</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="office-card">
+                        <div class="office-image">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h4 class="office-title">San Francisco HQ</h4>
+                        <div class="office-address">
+                            123 Innovation Drive<br>
+                            San Francisco, CA 94105<br>
+                            United States<br><br>
+                            <strong>Phone:</strong> +1 (555) 123-4567
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="office-card">
+                        <div class="office-image">
+                            <i class="fas fa-globe-europe"></i>
+                        </div>
+                        <h4 class="office-title">London Office</h4>
+                        <div class="office-address">
+                            456 Tech Street<br>
+                            London EC2A 4BX<br>
+                            United Kingdom<br><br>
+                            <strong>Phone:</strong> +44 20 7123 4567
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="office-card">
+                        <div class="office-image">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h4 class="office-title">Remote First</h4>
+                        <div class="office-address">
+                            We're a distributed team<br>
+                            working across 25+ countries<br>
+                            Around the clock support<br><br>
+                            <strong>Available:</strong> 24/7 Online
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">How quickly can I get started with CodeSync AI?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            You can get started immediately! Simply sign up for a free account and start collaborating on your first project within minutes. No setup or installation required.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">Do you offer enterprise plans?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! We offer enterprise plans with advanced security features, custom integrations, dedicated support, and SLA guarantees. Contact our sales team for a custom quote.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">Is my code secure with CodeSync AI?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Absolutely. We use end-to-end encryption, SOC 2 compliance, and enterprise-grade security measures. Your code is never used to train AI models without explicit consent.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">Can I integrate CodeSync AI with existing tools?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! We integrate with popular tools like GitHub, GitLab, Slack, Jira, and many more. Check our integrations page for the full list.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">What programming languages do you support?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We support 50+ programming languages including JavaScript, Python, Java, C++, Go, Rust, and many more. Our AI assistance works across all supported languages.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-header" onclick="toggleFaq(this)">
+                            <h5 class="faq-question">Do you offer training and onboarding?</h5>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! We provide comprehensive onboarding, training materials, webinars, and dedicated customer success managers for enterprise clients.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Contact form submission
+            $('#contactForm').submit(function(e) {
+                e.preventDefault();
+
+                // Get form data
+                const name = $(this).find('input[placeholder*="Name"]').val();
+                const email = $(this).find('input[type="email"]').val();
+                const subject = $(this).find('input[placeholder*="Subject"]').val();
+                const message = $(this).find('textarea').val();
+
+                // Simple validation
+                if (!name || !email || !subject || !message) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                // Simulate form submission
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.html();
+
+                submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Sending...');
+                submitBtn.prop('disabled', true);
+
+                setTimeout(function() {
+                    alert('Thank you for your message! We will get back to you within 24 hours.');
+                    $('#contactForm')[0].reset();
+                    submitBtn.html(originalText);
+                    submitBtn.prop('disabled', false);
+                }, 2000);
+            });
+
+            // Smooth scrolling
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if(target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+
+        // FAQ toggle function
+        function toggleFaq(element) {
+            const faqItem = $(element).closest('.faq-item');
+            const answer = faqItem.find('.faq-answer');
+            const icon = $(element).find('.faq-icon');
+
+            // Close all other FAQ items
+            $('.faq-answer').not(answer).slideUp();
+            $('.faq-icon').not(icon).removeClass('fa-chevron-up').addClass('fa-chevron-down');
+
+            // Toggle current FAQ item
+            answer.slideToggle();
+            icon.toggleClass('fa-chevron-down fa-chevron-up');
+        }
+    </script>
+{% endblock js %}

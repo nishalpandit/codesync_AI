@@ -1,0 +1,459 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Login / Sign Up {% endblock title %}
+{% block css %}
+  <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --danger: #da3633;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-width: 1200px;
+            width: 100%;
+            padding: 3rem;
+        }
+
+        /* Background Gradient Animation */
+        @keyframes backgroundAnimation {
+            0% {
+                background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            }
+            100% {
+                background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            }
+        }
+
+        .left-section {
+            background: radial-gradient(circle at 50%, rgba(88, 166, 255, 0.1), transparent);
+            border-radius: 16px;
+            padding: 3rem;
+            width: 45%;
+            min-height: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: backgroundAnimation 10s ease infinite;
+        }
+
+        .left-section h2 {
+            color: var(--text-primary);
+            font-size: 3rem;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-section p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* Floating Animation for the Left Section */
+        @keyframes floatingAnimation {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .left-section {
+            animation: floatingAnimation 3s ease-in-out infinite;
+        }
+
+        .form-section {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 3rem;
+            width: 55%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .auth-tab {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .auth-tab.active {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
+        }
+
+        .form-floating > .form-control {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 1rem 0.75rem;
+            height: auto;
+        }
+
+        .form-floating > .form-control:focus {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-floating > label {
+            color: var(--text-secondary);
+            padding: 1rem 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline-light {
+            color: var(--text-primary);
+            border-color: var(--border);
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            background-color: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--border);
+        }
+
+        .divider span {
+            background-color: var(--bg-secondary);
+            padding: 0 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .social-btn:hover {
+            background-color: var(--bg-primary);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .back-to-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-home:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                flex-direction: column;
+            }
+            .left-section {
+                width: 100%;
+                height: 250px;
+                margin-bottom: 2rem;
+                padding: 2rem;
+            }
+            .form-section {
+                width: 100%;
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %} {% endblock nav %}
+{% block content %}
+  <a href="index.html" class="back-to-home">
+        <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </a>
+
+    <div class="auth-container">
+        <div class="left-section">
+            <div>
+                <h2>Welcome to CodeSync AI</h2>
+                <p>Unlock the future of coding with us. Seamlessly log in or sign up to begin your journey.</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="brand-section">
+                <h1 class="brand-title">CodeSync AI</h1>
+                <p class="brand-subtitle">Welcome back to the future of coding</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+                <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up
+                </button>
+            </div>
+
+            <div class="social-login">
+                <a href="#" class="social-btn">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                </a>
+                <a href="#" class="social-btn">
+                    <i class="fab fa-google"></i>
+                    Google
+                </a>
+            </div>
+
+            <div class="divider">
+                <span>or continue with email</span>
+            </div>
+
+            <form class="auth-form" id="loginForm" method="POST" action="{% url 'auth' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="loginEmail" name="email" placeholder="Enter your email" required>
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope me-2"></i>Email address
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Enter your password" required>
+                        <label for="loginPassword">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" name="action" value="login" class="btn btn-primary w-100 mb-3">
+                    Sign In to CodeSync AI
+                </button>
+
+                <div class="text-center">
+                    <a href="" class="text-decoration-none" style="color: var(--accent); font-size: 0.9rem;">
+                        Forgot your password?
+                    </a>
+                </div>
+            </form>
+
+            <form class="auth-form d-none" id="signupForm" method="POST" action="{% url 'auth' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="signupName" name="full_name" placeholder="Enter your full name" required>
+                        <label for="signupName">
+                            <i class="fas fa-user me-2"></i>Full name
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="signupEmail" name="email" placeholder="Enter your email" required>
+                        <label for="signupEmail">
+                            <i class="fas fa-envelope me-2"></i>Email address
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="signupPassword" name="password" placeholder="Create a password" required>
+                        <label for="signupPassword">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                        <label for="confirmPassword">
+                            <i class="fas fa-lock me-2"></i>Confirm password
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" name="action" value="signup" class="btn btn-primary w-100 mb-3">
+                    Create CodeSync AI Account
+                </button>
+
+                <div class="text-center">
+                    <p class="text-secondary" style="font-size: 0.85rem;">
+                        By signing up, you agree to receive occasional updates about new features and AI improvements.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function switchTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.remove('d-none');
+                signupForm.classList.add('d-none');
+            } else {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.remove('d-none');
+                loginForm.classList.add('d-none');
+            }
+        }
+
+         
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Stop form submission
+                alert('Passwords do not match!');
+                return;
+            }
+        });
+    </script>
+{% endblock js %}

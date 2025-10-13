@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Community {% endblock title %}
+{% block css %}
+  <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        .stat-card:hover .stat-number {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+        }
+
+        .discussion-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.12);
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .discussion-card:hover .user-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .discussion-card:hover .discussion-title {
+            color: var(--accent);
+        }
+
+        .channel-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 12px 30px rgba(88, 166, 255, 0.12);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        .channel-card:hover .channel-icon {
+            transform: scale(1.2) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .discussion-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .discussion-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .discussion-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(88, 166, 255, 0.1);
+        }
+
+        .discussion-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .discussion-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .discussion-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .community-channels {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .channel-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .channel-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+   <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'help_center' %}">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'community' %}">Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">Join Our Developer Community</h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                Connect with thousands of developers, share knowledge, and build amazing things together
+            </p>
+            <a href="#join" class="btn btn-primary btn-lg">
+                <i class="fas fa-users me-2"></i>Join Community
+            </a>
+        </div>
+    </section>
+
+    <!-- Community Stats -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <span class="stat-number">50K+</span>
+                        <div class="stat-label">Active Members</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <span class="stat-number">15K+</span>
+                        <div class="stat-label">Discussions</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <span class="stat-number">120+</span>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <span class="stat-number">500+</span>
+                        <div class="stat-label">Daily Posts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Discussions -->
+    <section class="discussion-section">
+        <div class="container">
+            <h2 class="section-title">Recent Discussions</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Discussion threads -->
+                    <div class="discussion-card" onclick="openDiscussion('ai-tips')">
+                        <div class="discussion-header">
+                            <div class="user-avatar">MJ</div>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 500;">Mike Johnson</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">2 hours ago</div>
+                            </div>
+                        </div>
+                        <h4 class="discussion-title">Best AI coding tips for beginners?</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            What are your favorite AI features in CodeSync AI? I'm new to AI-assisted coding and would love some tips...
+                        </p>
+                        <div class="discussion-meta">
+                            <span><i class="fas fa-comments me-1"></i>23 replies</span>
+                            <span><i class="fas fa-heart me-1"></i>45 likes</span>
+                            <span><i class="fas fa-tag me-1"></i>AI, Tips</span>
+                        </div>
+                    </div>
+
+                    <!-- More discussions... -->
+                    <div class="discussion-card">
+                        <div class="discussion-header">
+                            <div class="user-avatar" style="background: linear-gradient(135deg, #34d399 0%, #059669 100%);">SR</div>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 500;">Sarah Rodriguez</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">4 hours ago</div>
+                            </div>
+                        </div>
+                        <h4 class="discussion-title">How to handle merge conflicts in real-time collaboration?</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            My team often runs into merge conflicts when multiple people are editing the same file...
+                        </p>
+                        <div class="discussion-meta">
+                            <span><i class="fas fa-comments me-1"></i>15 replies</span>
+                            <span><i class="fas fa-heart me-1"></i>32 likes</span>
+                            <span><i class="fas fa-tag me-1"></i>Collaboration, Git</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; position: sticky; top: 100px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 1.5rem;">Popular Tags</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <span style="background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">#AI</span>
+                            <span style="background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">#JavaScript</span>
+                            <span style="background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">#Python</span>
+                            <span style="background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">#Collaboration</span>
+                            <span style="background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">#React</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Channels -->
+    <section class="community-channels" id="join">
+        <div class="container">
+            <h2 class="section-title">Connect With Us</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="channel-card">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #7289da 0%, #5865f2 100%);">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Discord Server</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Real-time chat with developers from around the world. Get instant help and share your projects.
+                        </p>
+                        <a href="#" class="btn btn-primary">Join Discord</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="channel-card">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);">
+                            <i class="fab fa-twitter"></i>
+                        </div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Twitter Community</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Follow us for the latest updates, tips, and community highlights from CodeSync AI.
+                        </p>
+                        <a href="#" class="btn btn-primary">Follow Us</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="channel-card">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #333 0%, #000 100%);">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">GitHub Discussions</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Feature requests, bug reports, and technical discussions about CodeSync AI development.
+                        </p>
+                        <a href="#" class="btn btn-primary">View Discussions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+  <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        function openDiscussion(id) {
+            alert('This would open the discussion thread: ' + id);
+        }
+
+        $(document).ready(function() {
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if(target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+{% endblock js %}

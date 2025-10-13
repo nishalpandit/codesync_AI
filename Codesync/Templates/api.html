@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - API Documentation {% endblock title %}
+{% block css %}
+ <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .api-section {
+            padding: 60px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+            background-color: var(--bg-tertiary);
+        }
+
+        .api-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .method-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .method-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .method-get { background-color: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .method-post { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .method-put { background-color: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .method-delete { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .code-block {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2rem; }
+            .sidebar { position: static; margin-bottom: 2rem; }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+ <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'help_center' %}">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'api' %}">API Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+
+{% block content %}
+  <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">API Documentation</h1>
+            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                Build powerful integrations with CodeSync AI's REST API
+            </p>
+            <a href="#getting-started" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket me-2"></i>Get Started
+            </a>
+        </div>
+    </section>
+
+    <!-- API Documentation -->
+    <section class="api-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="sidebar">
+                        <h5 style="color: var(--text-primary); margin-bottom: 1rem;">Navigation</h5>
+                        <a href="#getting-started" class="nav-link active">Getting Started</a>
+                        <a href="#authentication" class="nav-link">Authentication</a>
+                        <a href="#projects" class="nav-link">Projects</a>
+                        <a href="#collaborators" class="nav-link">Collaborators</a>
+                        <a href="#ai-suggestions" class="nav-link">AI Suggestions</a>
+                        <a href="#webhooks" class="nav-link">Webhooks</a>
+                        <a href="#rate-limits" class="nav-link">Rate Limits</a>
+                        <a href="#errors" class="nav-link">Error Codes</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="api-content">
+                        <!-- Getting Started -->
+                        <div id="getting-started">
+                            <h2 class="section-title">Getting Started</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                The CodeSync AI API allows you to integrate collaborative coding features into your applications.
+                                All API requests are made over HTTPS and return JSON responses.
+                            </p>
+
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Base URL</h4>
+                            <div class="code-block">
+https://api.codesync.ai/v1
+                            </div>
+                        </div>
+
+                        <!-- Authentication -->
+                        <div id="authentication" style="margin-top: 3rem;">
+                            <h2 class="section-title">Authentication</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                CodeSync AI uses API keys to authenticate requests. Include your API key in the Authorization header.
+                            </p>
+
+                            <div class="code-block">
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     https://api.codesync.ai/v1/projects
+                            </div>
+                        </div>
+
+                        <!-- Projects API -->
+                        <div id="projects" style="margin-top: 3rem;">
+                            <h2 class="section-title">Projects</h2>
+
+                            <div class="method-card">
+                                <div class="method-header">
+                                    <span class="method-badge method-get">GET</span>
+                                    <h5 style="color: var(--text-primary); margin: 0;">List Projects</h5>
+                                </div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    Retrieve a list of all projects accessible to the authenticated user.
+                                </p>
+                                <div class="code-block">
+GET /projects
+
+Response:
+{
+  "projects": [
+    {
+      "id": "proj_123",
+      "name": "My Project",
+      "description": "A collaborative coding project",
+      "created_at": "2024-01-15T10:30:00Z",
+      "collaborators_count": 5
+    }
+  ]
+}
+                                </div>
+                            </div>
+
+                            <div class="method-card">
+                                <div class="method-header">
+                                    <span class="method-badge method-post">POST</span>
+                                    <h5 style="color: var(--text-primary); margin: 0;">Create Project</h5>
+                                </div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    Create a new collaborative project.
+                                </p>
+                                <div class="code-block">
+POST /projects
+
+Body:
+{
+  "name": "New Project",
+  "description": "Project description",
+  "visibility": "private"
+}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Suggestions -->
+                        <div id="ai-suggestions" style="margin-top: 3rem;">
+                            <h2 class="section-title">AI Suggestions</h2>
+
+                            <div class="method-card">
+                                <div class="method-header">
+                                    <span class="method-badge method-post">POST</span>
+                                    <h5 style="color: var(--text-primary); margin: 0;">Get Code Suggestions</h5>
+                                </div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    Request AI-powered code suggestions for a given context.
+                                </p>
+                                <div class="code-block">
+POST /ai/suggestions
+
+Body:
+{
+  "code": "function calculate",
+  "language": "javascript",
+  "context": "mathematical operations"
+}
+
+Response:
+{
+  "suggestions": [
+    {
+      "code": "function calculateSum(a, b) {\n  return a + b;\n}",
+      "confidence": 0.95
+    }
+  ]
+}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rate Limits -->
+                        <div id="rate-limits" style="margin-top: 3rem;">
+                            <h2 class="section-title">Rate Limits</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                API requests are rate limited to ensure fair usage across all users.
+                            </p>
+
+                            <table class="table" style="color: var(--text-primary); background-color: var(--bg-tertiary);">
+                                <thead>
+                                    <tr>
+                                        <th>Plan</th>
+                                        <th>Requests per Hour</th>
+                                        <th>AI Requests per Day</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Free</td>
+                                        <td>1,000</td>
+                                        <td>100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pro</td>
+                                        <td>10,000</td>
+                                        <td>1,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Enterprise</td>
+                                        <td>100,000</td>
+                                        <td>Unlimited</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Error Codes -->
+                        <div id="errors" style="margin-top: 3rem;">
+                            <h2 class="section-title">Error Codes</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                CodeSync AI uses standard HTTP response codes to indicate the success or failure of API requests.
+                            </p>
+
+                            <div class="code-block">
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "The request is missing required parameters",
+    "details": "Missing 'name' field in request body"
+  }
+}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+{% block js %}
+  <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Sidebar navigation
+            $('.nav-link').click(function(e) {
+                e.preventDefault();
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                var target = $(this).attr('href');
+                $('html, body').animate({
+                    scrollTop: $(target).offset().top - 100
+                }, 500);
+            });
+
+            // Scroll spy
+            $(window).scroll(function() {
+                var scrollPos = $(window).scrollTop() + 150;
+
+                $('[id]').each(function() {
+                    var currLink = $(this);
+                    var refElement = currLink;
+
+                    if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+                        $('.nav-link').removeClass('active');
+                        $('a[href="#' + currLink.attr('id') + '"]').addClass('active');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock js %}
+
+
+

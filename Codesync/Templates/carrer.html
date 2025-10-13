@@ -1,0 +1,720 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Careers {% endblock title %}
+{% block css %}
+   <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .values-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .value-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .value-card:hover .value-icon {
+            transform: scale(1.15);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.2);
+        }
+
+        .job-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.12);
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.02) 100%);
+        }
+
+        .job-card:hover .job-title {
+            color: var(--accent);
+        }
+
+        .perk-item:hover {
+            transform: translateX(5px);
+            background-color: rgba(88, 166, 255, 0.05);
+            border-color: var(--accent);
+        }
+
+        .perk-item:hover .perk-icon {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .value-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+            color: white;
+        }
+
+        .value-icon.innovation { background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%); }
+        .value-icon.collaboration { background: linear-gradient(135deg, #34d399 0%, #059669 100%); color: #064e3b; }
+        .value-icon.growth { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #451a03; }
+        .value-icon.impact { background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); }
+
+        .value-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .value-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .jobs-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .job-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 20px rgba(88, 166, 255, 0.1);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .job-department {
+            background-color: var(--bg-tertiary);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-meta i {
+            margin-right: 0.5rem;
+        }
+
+        .job-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-tag {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .perks-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .perk-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .perk-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .perk-content h5 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .perk-content p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .job-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .job-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .filter-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+   <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="index.html">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'features' %}">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'carrer' %}">Careers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+   <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">Join Our Team</h1>
+            <p class="hero-subtitle">
+                Help us build the future of collaborative coding. Work with passionate developers, designers, and AI researchers who are changing how software is built.
+            </p>
+            <a href="#open-positions" class="btn btn-primary btn-lg">
+                <i class="fas fa-briefcase me-2"></i>View Open Positions
+            </a>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <h2 class="section-title">Our Values</h2>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon innovation">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4 class="value-title">Innovation</h4>
+                        <p class="value-description">
+                            We constantly push boundaries and explore new technologies to solve complex problems in software development.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon collaboration">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="value-title">Collaboration</h4>
+                        <p class="value-description">
+                            We believe great software is built by great teams working together with diverse perspectives and skills.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon growth">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="value-title">Growth</h4>
+                        <p class="value-description">
+                            We invest in our people's development and provide opportunities to learn, grow, and advance their careers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon impact">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h4 class="value-title">Impact</h4>
+                        <p class="value-description">
+                            We're making a real difference in how millions of developers work and create software worldwide.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perks Section -->
+    <section class="perks-section">
+        <div class="container">
+            <h2 class="section-title">Why Work With Us</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Remote-First Culture</h5>
+                            <p>Work from anywhere in the world with flexible hours and async communication</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Learning & Development</h5>
+                            <p>$3,000 annual learning budget, conference tickets, and skill development programs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Health & Wellness</h5>
+                            <p>Comprehensive health insurance, mental health support, and wellness stipend</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Top-tier Equipment</h5>
+                            <p>Latest MacBook Pro/PC, monitors, and all the tools you need to do your best work</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Unlimited PTO</h5>
+                            <p>Take the time you need to recharge with our flexible time-off policy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="perk-content">
+                            <h5>Equity Package</h5>
+                            <p>Share in the company's success with competitive equity compensation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open Positions Section -->
+    <section class="jobs-section" id="open-positions">
+        <div class="container">
+            <h2 class="section-title">Open Positions</h2>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all">All Roles</button>
+                <button class="filter-btn" data-filter="engineering">Engineering</button>
+                <button class="filter-btn" data-filter="design">Design</button>
+                <button class="filter-btn" data-filter="product">Product</button>
+                <button class="filter-btn" data-filter="marketing">Marketing</button>
+            </div>
+
+            <!-- Job Listings -->
+            <div class="job-listings">
+                <!-- Engineering Jobs -->
+                <div class="job-card" data-category="engineering">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Senior Full Stack Engineer</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span><i class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$120k - $180k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Engineering</span>
+                    </div>
+                    <p class="job-description">
+                        Build and scale our real-time collaboration platform. Work with React, Node.js, WebRTC, and AI integration to create seamless developer experiences.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">WebRTC</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+
+                <div class="job-card" data-category="engineering">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">AI/ML Engineer</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span><i class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$140k - $200k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Engineering</span>
+                    </div>
+                    <p class="job-description">
+                        Develop and optimize AI models for code completion, bug detection, and performance analysis. Work with large language models and cutting-edge ML techniques.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">PyTorch</span>
+                        <span class="skill-tag">Transformers</span>
+                        <span class="skill-tag">CUDA</span>
+                        <span class="skill-tag">MLOps</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+
+                <div class="job-card" data-category="engineering">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">DevOps Engineer</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span><i class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$110k - $160k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Engineering</span>
+                    </div>
+                    <p class="job-description">
+                        Scale our infrastructure to handle millions of collaborative coding sessions. Work with Kubernetes, AWS, and monitoring systems.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Terraform</span>
+                        <span class="skill-tag">Monitoring</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+
+                <!-- Design Jobs -->
+                <div class="job-card" data-category="design">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Senior Product Designer</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span><i class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$100k - $150k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Design</span>
+                    </div>
+                    <p class="job-description">
+                        Design intuitive interfaces for complex developer tools. Create user experiences that make collaborative coding feel natural and efficient.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">Design Systems</span>
+                        <span class="skill-tag">User Research</span>
+                        <span class="skill-tag">Prototyping</span>
+                        <span class="skill-tag">HTML/CSS</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+
+                <!-- Product Jobs -->
+                <div class="job-card" data-category="product">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Product Manager</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$120k - $170k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Product</span>
+                    </div>
+                    <p class="job-description">
+                        Drive product strategy for our AI-powered development tools. Work with engineering and design to ship features that developers love.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">Product Strategy</span>
+                        <span class="skill-tag">Analytics</span>
+                        <span class="skill-tag">User Research</span>
+                        <span class="skill-tag">Agile</span>
+                        <span class="skill-tag">Developer Tools</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+
+                <!-- Marketing Jobs -->
+                <div class="job-card" data-category="marketing">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Developer Relations Manager</h3>
+                            <div class="job-meta">
+                                <span><i class="fas fa-map-marker-alt"></i>Remote</span>
+                                <span><i class="fas fa-clock"></i>Full-time</span>
+                                <span><i class="fas fa-dollar-sign"></i>$90k - $130k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Marketing</span>
+                    </div>
+                    <p class="job-description">
+                        Build relationships with the developer community. Create content, speak at conferences, and help developers succeed with our platform.
+                    </p>
+                    <div class="job-skills">
+                        <span class="skill-tag">Developer Community</span>
+                        <span class="skill-tag">Content Creation</span>
+                        <span class="skill-tag">Public Speaking</span>
+                        <span class="skill-tag">Technical Writing</span>
+                        <span class="skill-tag">Social Media</span>
+                    </div>
+                    <button class="btn btn-primary">Apply Now</button>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <p class="text-secondary mb-3">Don't see a perfect fit? We're always looking for talented people.</p>
+                <a href="mailto:careers@codesync.ai" class="btn btn-outline-light">
+                    <i class="fas fa-envelope me-2"></i>Send Us Your Resume
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+   <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Filter functionality
+            $('.filter-btn').click(function() {
+                const filter = $(this).data('filter');
+
+                // Update active button
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                // Show/hide job cards
+                if (filter === 'all') {
+                    $('.job-card').fadeIn();
+                } else {
+                    $('.job-card').hide();
+                    $('[data-category="' + filter + '"]').fadeIn();
+                }
+            });
+
+            // Apply button functionality
+            $('.btn-primary').click(function() {
+                if ($(this).text() === 'Apply Now') {
+                    alert('This would redirect to the application form for this position.');
+                }
+            });
+
+            // Smooth scrolling
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if(target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+{% endblock js %}

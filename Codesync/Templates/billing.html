@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Billing {% endblock title %}
+{% block css %}
+ <style>
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+    }
+    .pricing-card {
+      border: 1px solid #30363d;
+      border-radius: 15px;
+      background: #161b22;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .pricing-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    }
+    .pricing-card h5 {
+      color: #58a6ff;
+    }
+    .price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #f0f6fc;
+    }
+    .btn-plan {
+      border-radius: 25px;
+      font-weight: 500;
+    }
+    /* Top Right Action Button */
+    .nav-action {
+      background: linear-gradient(135deg, #58a6ff, #1f6feb);
+      color: white !important;
+      border-radius: 25px;
+      padding: 6px 16px;
+      font-weight: 500;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .nav-action:hover {
+      background: linear-gradient(135deg, #1f6feb, #58a6ff);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+  </style>
+{% endblock css %}
+
+{% block nav %}  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-black border-bottom border-secondary">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-info" href="{% url 'index' %}">CodeSync AI</a>
+      <a href="{% url 'dashboard' %}" class="nav-action">← Back to Dashboard</a>
+    </div>
+  </nav>
+ {% endblock nav %}
+{% block content %}
+ <!-- Billing Section -->
+  <section class="py-5">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-4 text-light">Choose Your Plan</h2>
+      <p class="text-secondary mb-5">Flexible pricing for developers and teams — upgrade anytime.</p>
+      <div class="row g-4 justify-content-center">
+
+        <!-- Free Plan -->
+        <div class="col-md-4">
+          <div class="pricing-card p-4 h-100">
+            <h5 class="mb-3"><i class="fa-regular fa-gem"></i> Free</h5>
+            <p class="price">$0<span class="fs-6">/mo</span></p>
+            <ul class="list-unstyled text-secondary mt-3">
+              <li>✔ 1 Repository</li>
+              <li>✔ Basic AI Suggestions</li>
+              <li>✔ Community Support</li>
+            </ul>
+            <button class="btn btn-outline-info w-100 btn-plan mt-3">Get Started</button>
+          </div>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="col-md-4">
+          <div class="pricing-card p-4 h-100 border-info border-2">
+            <h5 class="mb-3"><i class="fa-solid fa-bolt"></i> Pro</h5>
+            <p class="price">$9<span class="fs-6">/mo</span></p>
+            <ul class="list-unstyled text-secondary mt-3">
+              <li>✔ Unlimited Repositories</li>
+              <li>✔ Advanced AI Suggestions</li>
+              <li>✔ Priority Support</li>
+            </ul>
+            <button class="btn btn-info w-100 btn-plan mt-3">Upgrade</button>
+          </div>
+        </div>
+
+        <!-- Pro+ Plan -->
+        <div class="col-md-4">
+          <div class="pricing-card p-4 h-100">
+            <h5 class="mb-3"><i class="fa-solid fa-crown"></i> Pro+</h5>
+            <p class="price">$19<span class="fs-6">/mo</span></p>
+            <ul class="list-unstyled text-secondary mt-3">
+              <li>✔ Unlimited Repositories</li>
+              <li>✔ AI Pair Programmer</li>
+              <li>✔ 24/7 Dedicated Support</li>
+            </ul>
+            <button class="btn btn-success w-100 btn-plan mt-3">Go Pro+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <footer class="py-4 border-top border-secondary text-center">
+    <p class="mb-0 text-secondary">&copy; 2025 CodeSync AI. All rights reserved.</p>
+  </footer>
+{% endblock content %}
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock js %}

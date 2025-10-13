@@ -1,0 +1,609 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - ai-chatbot Repository {% endblock title %}
+{% block css %}
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+        }
+
+        .repo-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .repo-privacy {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .online-users {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-primary, .btn-secondary, .btn-success {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-primary);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        .file-explorer {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .file-explorer-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-explorer-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .file-tree {
+            padding: 0.5rem 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: background-color 0.2s ease;
+        }
+
+        .file-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .file-item.active {
+            background-color: rgba(88, 166, 255, 0.1);
+            color: var(--accent);
+        }
+
+        .file-icon {
+            width: 16px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .file-icon.folder {
+            color: #54aeff;
+        }
+
+        .file-icon.js {
+            color: #f1e05a;
+        }
+
+        .file-icon.py {
+            color: #3572A5;
+        }
+
+        .file-icon.md {
+            color: #083fa1;
+        }
+
+        .file-icon.json {
+            color: #f85149;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+
+        .editor-header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-path {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .editor-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editor-btn:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .code-editor {
+            flex: 1;
+            background-color: var(--bg-primary);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 1rem;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            resize: none;
+            overflow-y: auto;
+        }
+
+        .collaboration-panel {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 300px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .collab-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collab-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .collab-users {
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .user-cursor {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .file-explorer {
+                display: none;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .collaboration-panel {
+                display: none;
+            }
+
+            .top-navbar {
+                padding: 1rem;
+            }
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+   <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="#" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+                <h1 class="repo-title">
+                    <i class="fas fa-folder"></i>
+                    <span>ai-chatbot</span>
+                    <span class="repo-privacy">Private</span>
+                </h1>
+            </div>
+            <div class="navbar-right">
+                <div class="online-users">
+                    <div class="online-indicator"></div>
+                    <span>3 users online</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-success btn-sm" onclick="commitChanges()">
+                        <i class="fas fa-check me-2"></i>
+                        <span>Commit</span>
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="showAISuggestions()">
+                        <i class="fas fa-robot me-2"></i>
+                        <span>AI Suggest</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="shareRepo()">
+                        <i class="fas fa-share me-2"></i>
+                        <span>Share</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock nav %}
+{% block content %}
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- File Explorer -->
+        <div class="file-explorer">
+            <div class="file-explorer-header">
+                <h3 class="file-explorer-title">Project Files</h3>
+                <button class="btn btn-sm" style="background: none; border: none; color: var(--text-secondary);">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="file-tree">
+                <div class="file-item" onclick="selectFile('src')">
+                    <i class="fas fa-folder file-icon folder"></i>
+                    <span>src</span>
+                </div>
+                <div class="file-item" onclick="selectFile('main.py')" style="padding-left: 2rem;">
+                    <i class="fas fa-file file-icon py"></i>
+                    <span>main.py</span>
+                </div>
+                <div class="file-item active" onclick="selectFile('chatbot.py')" style="padding-left: 2rem;">
+                    <i class="fas fa-file file-icon py"></i>
+                    <span>chatbot.py</span>
+                </div>
+                <div class="file-item" onclick="selectFile('utils.py')" style="padding-left: 2rem;">
+                    <i class="fas fa-file file-icon py"></i>
+                    <span>utils.py</span>
+                </div>
+                <div class="file-item" onclick="selectFile('config')">
+                    <i class="fas fa-folder file-icon folder"></i>
+                    <span>config</span>
+                </div>
+                <div class="file-item" onclick="selectFile('config.json')" style="padding-left: 2rem;">
+                    <i class="fas fa-file file-icon json"></i>
+                    <span>config.json</span>
+                </div>
+                <div class="file-item" onclick="selectFile('requirements.txt')">
+                    <i class="fas fa-file file-icon"></i>
+                    <span>requirements.txt</span>
+                </div>
+                <div class="file-item" onclick="selectFile('README.md')">
+                    <i class="fas fa-file file-icon md"></i>
+                    <span>README.md</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor Container -->
+        <div class="editor-container">
+            <div class="editor-header">
+                <div class="file-path">
+                    <i class="fas fa-file file-icon py"></i>
+                    <span>src / chatbot.py</span>
+                </div>
+                <div class="editor-actions">
+                    <button class="editor-btn" onclick="formatCode()">
+                        <i class="fas fa-indent me-1"></i>
+                        <span>Format</span>
+                    </button>
+                    <button class="editor-btn" onclick="saveFile()">
+                        <i class="fas fa-save me-1"></i>
+                        <span>Save</span>
+                    </button>
+                </div>
+            </div>
+
+            <textarea class="code-editor" id="codeEditor" placeholder="Loading file content...">import tensorflow as tf
+import numpy as np
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import json
+import logging
+
+class AIChat:
+    def __init__(self, model_name='gpt2'):
+        self.tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+        self.model = GPT2LMHeadModel.from_pretrained(model_name)
+        self.conversation_history = []
+
+    def generate_response(self, user_input):
+        # Add user input to conversation history
+        self.conversation_history.append(user_input)
+
+        # Encode the input
+        input_ids = self.tokenizer.encode(user_input, return_tensors='pt')
+
+        # Generate response
+        output = self.model.generate(
+            input_ids,
+            max_length=150,
+            num_return_sequences=1,
+            temperature=0.7
+        )
+
+        # Decode and return
+        response = self.tokenizer.decode(output[0], skip_special_tokens=True)
+        self.conversation_history.append(response)
+
+        return response
+
+    def clear_history(self):
+        self.conversation_history = []</textarea>
+        </div>
+    </div>
+
+    <!-- Collaboration Panel -->
+    <div class="collaboration-panel">
+        <div class="collab-header">
+            <h4 class="collab-title">Active Users</h4>
+            <span style="color: var(--text-secondary); font-size: 0.8rem;">3 online</span>
+        </div>
+        <div class="collab-users">
+            <div class="user-item">
+                <div class="user-avatar" style="background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);">
+                    NP
+                </div>
+                <div class="user-info">
+                    <p class="user-name">Nihal Pandit (You)</p>
+                    <p class="user-status">Editing chatbot.py</p>
+                </div>
+                <div class="user-cursor" style="background-color: #58a6ff;"></div>
+            </div>
+
+            <div class="user-item">
+                <div class="user-avatar" style="background: linear-gradient(135deg, #34d399 0%, #059669 100%);">
+                    JD
+                </div>
+                <div class="user-info">
+                    <p class="user-name">Nihal Pandit</p>
+                    <p class="user-status">Viewing main.py</p>
+                </div>
+                <div class="user-cursor" style="background-color: #34d399;"></div>
+            </div>
+
+            <div class="user-item">
+                <div class="user-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    SM
+                </div>
+                <div class="user-info">
+                    <p class="user-name">Tanishq Kumar</p>
+                    <p class="user-status">Editing utils.py</p>
+                </div>
+                <div class="user-cursor" style="background-color: #f59e0b;"></div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        function selectFile(filename) {
+            $('.file-item').removeClass('active');
+            event.target.closest('.file-item').classList.add('active');
+            console.log('Selected file:', filename);
+        }
+
+        function formatCode() {
+            alert('Code formatting would be applied here');
+        }
+
+        function saveFile() {
+            alert('File saved successfully!');
+        }
+
+        function commitChanges() {
+            alert('Commit changes dialog would open here');
+        }
+
+        function showAISuggestions() {
+            alert('AI suggestions panel would open here');
+        }
+
+        function shareRepo() {
+            alert('Share repository dialog would open here');
+        }
+
+        $(document).ready(function() {
+            // Auto-save functionality
+            let saveTimeout;
+            $('#codeEditor').on('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(function() {
+                    console.log('Auto-saving...');
+                }, 2000);
+            });
+        });
+    </script>
+{% endblock js %}

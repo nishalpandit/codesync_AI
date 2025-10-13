@@ -1,0 +1,1335 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Settings {% endblock title %}
+{% block css %}
+  <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        .settings-sidebar {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+        }
+
+        .settings-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent);
+            background-color: rgba(88, 166, 255, 0.1);
+            border-right-color: var(--accent);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .settings-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .settings-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .setting-control {
+            margin-left: 1rem;
+        }
+
+        .form-control {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+        }
+
+        .form-control:focus {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-select {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+        }
+
+        .form-select:focus {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-check-input {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border);
+            border-radius: 4px;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-secondary);
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+            background-color: white;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            margin-right: 1.5rem;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .usage-bar {
+            background-color: var(--bg-tertiary);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 70%, var(--danger) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .usage-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .repo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .repo-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .repo-icon {
+            color: var(--accent);
+        }
+
+        .repo-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .repo-access {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .access-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .ai-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .ai-feature-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .ai-feature-card:hover {
+            border-color: var(--accent);
+        }
+
+        .ai-feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .ai-feature-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .ai-feature-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .danger-zone {
+            border-color: var(--danger);
+            border-width: 2px;
+        }
+
+        .danger-zone .section-title {
+            color: var(--danger);
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-warning {
+            background-color: rgba(210, 153, 34, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .settings-sidebar {
+                width: 100%;
+                padding: 1rem 0;
+            }
+
+            .settings-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 1rem;
+            }
+
+            .nav-item {
+                flex-shrink: 0;
+            }
+
+            .nav-link {
+                padding: 0.5rem 1rem;
+                border-right: none;
+                border-bottom: 3px solid transparent;
+                white-space: nowrap;
+            }
+
+            .nav-link:hover,
+            .nav-link.active {
+                border-right: none;
+                border-bottom-color: var(--accent);
+            }
+
+            .settings-content {
+                padding: 1rem;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .setting-control {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .ai-feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %} {% endblock nav %}
+{% block content %}
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="{% url 'dashboard' %}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+                <h1 class="page-title">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Settings Sidebar -->
+        <div class="settings-sidebar">
+            <ul class="settings-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('profile')">
+                        <i class="fas fa-user nav-icon"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('repositories')">
+                        <i class="fas fa-folder nav-icon"></i>
+                        <span>Repositories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('ai-features')">
+                        <i class="fas fa-robot nav-icon"></i>
+                        <span>AI Features</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('collaboration')">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span>Collaboration</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('notifications')">
+                        <i class="fas fa-bell nav-icon"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('security')">
+                        <i class="fas fa-shield-alt nav-icon"></i>
+                        <span>Security</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('billing')">
+                        <i class="fas fa-credit-card nav-icon"></i>
+                        <span>Billing</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="settings-content">
+            <!-- Profile Section -->
+            <div id="profile-section" class="settings-section">
+                <h2 class="section-title">Profile Settings</h2>
+                <p class="section-description">Manage your personal information and account preferences</p>
+
+                <div class="profile-info">
+                    <div class="profile-avatar-large">NP</div>
+                    <div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">Nishal Kumar Pandit</h4>
+                        <p style="color: var(--text-secondary); margin: 0;">nihalpandit000@gmail.com</p>
+                        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Member since March 2024</p>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Full Name</div>
+                        <div class="setting-desc">Your display name across CodeSync AI</div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="text" class="form-control" value="Nihal Pandit" style="width: 200px;">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Email Address</div>
+                        <div class="setting-desc">Primary email for notifications and account recovery</div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="email" class="form-control" value="abc@gmail.com" style="width: 250px;">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Username</div>
+                        <div class="setting-desc">Your unique identifier on the platform</div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="text" class="form-control" value="Nihal pandit" style="width: 200px;">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Bio</div>
+                        <div class="setting-desc">Tell others about yourself</div>
+                    </div>
+                    <div class="setting-control">
+                        <textarea class="form-control" rows="3" style="width: 300px;" placeholder="Full-stack developer passionate about AI and collaboration..."></textarea>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Location</div>
+                        <div class="setting-desc">Your current location</div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="text" class="form-control" value="Jharkhand , India" style="width: 200px;">
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-primary me-2" onclick="saveProfile()">Save Changes</button>
+                    <button class="btn btn-outline-secondary">Reset</button>
+                </div>
+            </div>
+
+            <!-- Repositories Section -->
+            <div id="repositories-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">Repository Access Management</h2>
+                <p class="section-description">Control access permissions for your repositories</p>
+
+                <div class="repo-item">
+                    <div class="repo-info">
+                        <i class="fas fa-folder repo-icon"></i>
+                        <div>
+                            <div class="repo-name">ai-chatbot</div>
+                            <div class="repo-access">Private repository • 3 collaborators</div>
+                        </div>
+                    </div>
+                    <div class="access-controls">
+                        <select class="form-select" style="width: 120px;">
+                            <option>Private</option>
+                            <option>Public</option>
+                            <option>Internal</option>
+                        </select>
+                        <button class="btn btn-outline-secondary btn-sm">Manage</button>
+                    </div>
+                </div>
+
+                <div class="repo-item">
+                    <div class="repo-info">
+                        <i class="fas fa-folder repo-icon"></i>
+                        <div>
+                            <div class="repo-name">web-scraper</div>
+                            <div class="repo-access">Public repository • 8 collaborators</div>
+                        </div>
+                    </div>
+                    <div class="access-controls">
+                        <select class="form-select" style="width: 120px;">
+                            <option>Private</option>
+                            <option selected>Public</option>
+                            <option>Internal</option>
+                        </select>
+                        <button class="btn btn-outline-secondary btn-sm">Manage</button>
+                    </div>
+                </div>
+
+                <div class="repo-item">
+                    <div class="repo-info">
+                        <i class="fas fa-folder repo-icon"></i>
+                        <div>
+                            <div class="repo-name">react-dashboard</div>
+                            <div class="repo-access">Private repository • 2 collaborators</div>
+                        </div>
+                    </div>
+                    <div class="access-controls">
+                        <select class="form-select" style="width: 120px;">
+                            <option selected>Private</option>
+                            <option>Public</option>
+                            <option>Internal</option>
+                        </select>
+                        <button class="btn btn-outline-secondary btn-sm">Manage</button>
+                    </div>
+                </div>
+
+                <div class="setting-item mt-4">
+                    <div class="setting-info">
+                        <div class="setting-label">Default Repository Privacy</div>
+                        <div class="setting-desc">Default visibility for new repositories</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 150px;">
+                            <option selected>Private</option>
+                            <option>Public</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Auto-invite Collaborators</div>
+                        <div class="setting-desc">Automatically invite team members to new repositories</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features Section -->
+            <div id="ai-features-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">AI Features</h2>
+                <p class="section-description">Configure AI assistance and automation settings</p>
+
+                <div class="ai-feature-grid">
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-lightbulb ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Code Suggestions</div>
+                        <div class="ai-feature-desc">Get real-time AI-powered code completions and suggestions</div>
+                    </div>
+
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-bug ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Bug Detection</div>
+                        <div class="ai-feature-desc">Automatically detect and highlight potential bugs</div>
+                    </div>
+
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-tachometer-alt ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Performance Analysis</div>
+                        <div class="ai-feature-desc">Analyze code performance and suggest optimizations</div>
+                    </div>
+
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-file-alt ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Documentation Generation</div>
+                        <div class="ai-feature-desc">Auto-generate documentation from your code</div>
+                    </div>
+
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-shield-alt ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Security Scanning</div>
+                        <div class="ai-feature-desc">Scan code for security vulnerabilities</div>
+                    </div>
+
+                    <div class="ai-feature-card">
+                        <div class="ai-feature-header">
+                            <i class="fas fa-code ai-feature-icon"></i>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="ai-feature-title">Code Refactoring</div>
+                        <div class="ai-feature-desc">Intelligent code refactoring suggestions</div>
+                    </div>
+                </div>
+
+                <div class="setting-item mt-4">
+                    <div class="setting-info">
+                        <div class="setting-label">AI Model Preference</div>
+                        <div class="setting-desc">Choose your preferred AI model for code assistance</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 200px;">
+                            <option selected>GPT-4 (Recommended)</option>
+                            <option>GPT-3.5 Turbo</option>
+                            <option>Claude-3</option>
+                            <option>CodeLlama</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Suggestion Frequency</div>
+                        <div class="setting-desc">How often AI should provide suggestions</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 150px;">
+                            <option>Conservative</option>
+                            <option selected>Balanced</option>
+                            <option>Aggressive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collaboration Section -->
+            <div id="collaboration-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">Collaboration Settings</h2>
+                <p class="section-description">Configure how you work with your team</p>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Real-time Collaboration</div>
+                        <div class="setting-desc">Allow others to see your cursor and edits in real-time</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Show Online Status</div>
+                        <div class="setting-desc">Let team members see when you're online and active</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Auto-save Interval</div>
+                        <div class="setting-desc">How often your changes are automatically saved</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 150px;">
+                            <option>10 seconds</option>
+                            <option selected>30 seconds</option>
+                            <option>1 minute</option>
+                            <option>5 minutes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Conflict Resolution</div>
+                        <div class="setting-desc">How to handle merge conflicts in collaborative editing</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 180px;">
+                            <option>Ask every time</option>
+                            <option selected>Auto-merge safe changes</option>
+                            <option>Always create branches</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Team Chat</div>
+                        <div class="setting-desc">Enable integrated chat for project discussions</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Code Review Requests</div>
+                        <div class="setting-desc">Automatically request reviews for significant changes</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Section -->
+            <div id="notifications-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">Notification Preferences</h2>
+                <p class="section-description">Control what notifications you receive and how</p>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Email Notifications</div>
+                        <div class="setting-desc">Receive notifications via email</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Push Notifications</div>
+                        <div class="setting-desc">Receive browser push notifications</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Pull Request Updates</div>
+                        <div class="setting-desc">Notifications for PR comments, reviews, and merges</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">AI Suggestions</div>
+                        <div class="setting-desc">Notifications when AI has new suggestions</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Collaboration Updates</div>
+                        <div class="setting-desc">When team members join/leave or make changes</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Security Alerts</div>
+                        <div class="setting-desc">Important security and account notifications</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked disabled>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Digest Frequency</div>
+                        <div class="setting-desc">How often to send summary emails</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="form-select" style="width: 150px;">
+                            <option>Never</option>
+                            <option selected>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div id="security-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">Security & Privacy</h2>
+                <p class="section-description">Manage your account security and privacy settings</p>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Two-Factor Authentication</div>
+                        <div class="setting-desc">Add an extra layer of security to your account</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-primary" onclick="setup2FA()">Enable 2FA</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Change Password</div>
+                        <div class="setting-desc">Update your account password</div>
+                    </div>
+                    <div class="setting-control">
+                       <a href="{% url 'change_pass' %}"> <button  class="btn btn-outline-secondary" onclick="changePassword()">Change Password</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Login Sessions</div>
+                        <div class="setting-desc">Manage your active login sessions</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-outline-secondary" onclick="viewSessions()">View Sessions</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">API Keys</div>
+                        <div class="setting-desc">Manage your API access tokens</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-outline-secondary" onclick="manageAPIKeys()">Manage Keys</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Data Export</div>
+                        <div class="setting-desc">Download a copy of your data</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-outline-secondary" onclick="exportData()">Request Export</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Privacy Mode</div>
+                        <div class="setting-desc">Hide your activity from public profile</div>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Section -->
+            <div id="billing-section" class="settings-section" style="display: none;">
+                <h2 class="section-title">Billing & Usage</h2>
+                <p class="section-description">Manage your subscription and view usage statistics</p>
+
+                <div class="alert alert-info mb-4" style="background-color: rgba(88, 166, 255, 0.1); border-color: var(--accent); color: var(--accent);">
+                    <i class="fas fa-info-circle me-2"></i>
+                    You're currently on the <strong>Pro Plan</strong> - $19/month
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">AI Requests Usage</div>
+                        <div class="setting-desc">Monthly AI suggestion requests</div>
+                        <div class="usage-bar">
+                            <div class="usage-fill" style="width: 65%;"></div>
+                        </div>
+                        <div class="usage-stats">
+                            <span>6,500 used</span>
+                            <span>10,000 limit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Storage Usage</div>
+                        <div class="setting-desc">Repository storage space</div>
+                        <div class="usage-bar">
+                            <div class="usage-fill" style="width: 45%;"></div>
+                        </div>
+                        <div class="usage-stats">
+                            <span>4.5 GB used</span>
+                            <span>10 GB limit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Collaborators</div>
+                        <div class="setting-desc">Active team members</div>
+                        <div class="usage-stats mt-2">
+                            <span>8 active</span>
+                            <span>25 limit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Next Billing Date</div>
+                        <div class="setting-desc">Your subscription renews on March 15, 2025</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-outline-secondary" onclick="viewBilling()">View Details</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Plan Management</div>
+                        <div class="setting-desc">Upgrade, downgrade, or cancel your plan</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-primary me-2" onclick="upgradePlan()">Upgrade Plan</button>
+                        <button class="btn btn-outline-secondary" onclick="managePlan()">Manage</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-section danger-zone" style="display: none;" id="danger-section">
+                <h2 class="section-title">Danger Zone</h2>
+                <p class="section-description">Irreversible and destructive actions</p>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    These actions cannot be undone. Please proceed with caution.
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Delete All Repositories</div>
+                        <div class="setting-desc">Permanently delete all your repositories and their history</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-danger" onclick="deleteAllRepos()">Delete All Repositories</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Delete Account</div>
+                        <div class="setting-desc">Permanently delete your account and all associated data</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.settings-section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // Show danger section for security
+            if (sectionName === 'security') {
+                document.getElementById('danger-section').style.display = 'block';
+            }
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+        }
+
+        function saveProfile() {
+            // Simulate saving profile changes
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = 'Saved!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 1000);
+            }, 1500);
+        }
+
+        function setup2FA() {
+            alert('2FA setup would open a modal with QR code and backup codes');
+        }
+
+        function changePassword() {
+            alert('Change password form would be displayed');
+        }
+
+        function viewSessions() {
+            alert('Active sessions list would be shown');
+        }
+
+        function manageAPIKeys() {
+            alert('API keys management interface would be displayed');
+        }
+
+        function exportData() {
+            if (confirm('Request a data export? You will receive an email when ready.')) {
+                alert('Data export request submitted. You will receive an email within 24 hours.');
+            }
+        }
+
+        function viewBilling() {
+            alert('Billing history and invoice details would be displayed');
+        }
+
+        function upgradePlan() {
+            alert('Plan upgrade options would be shown');
+        }
+
+        function managePlan() {
+            alert('Plan management options would be displayed');
+        }
+
+        function deleteAllRepos() {
+            const confirmation = prompt('Type "DELETE ALL REPOSITORIES" to confirm this action:');
+            if (confirmation === 'DELETE ALL REPOSITORIES') {
+                alert('All repositories would be scheduled for deletion');
+            } else if (confirmation !== null) {
+                alert('Confirmation text did not match. Action cancelled.');
+            }
+        }
+
+        function deleteAccount() {
+            const confirmation = prompt('Type "DELETE MY ACCOUNT" to confirm this action:');
+            if (confirmation === 'DELETE MY ACCOUNT') {
+                alert('Account deletion process would begin');
+            } else if (confirmation !== null) {
+                alert('Confirmation text did not match. Action cancelled.');
+            }
+        }
+
+        // Auto-save functionality for form inputs
+        document.addEventListener('change', function(e) {
+            if (e.target.matches('.form-control, .form-select, input[type="checkbox"]')) {
+                // Show save indicator
+                const indicator = document.createElement('div');
+                indicator.textContent = 'Saved';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background-color: var(--success);
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 4px;
+                    z-index: 9999;
+                    font-size: 0.85rem;
+                `;
+                document.body.appendChild(indicator);
+
+                setTimeout(() => {
+                    indicator.remove();
+                }, 2000);
+            }
+        });
+
+        // Initialize with profile section
+        window.addEventListener('load', function() {
+            showSection('profile');
+        });
+
+        // Handle mobile navigation
+        if (window.innerWidth <= 768) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Close mobile menu after selection
+                    setTimeout(() => {
+                        window.scrollTo(0, 0);
+                    }, 100);
+                });
+            });
+        }
+    </script>
+{% endblock js %}

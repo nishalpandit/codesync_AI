@@ -1,0 +1,1094 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Pull Requests {% endblock title %}
+
+{% block css %}
+<style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+            --purple: #a5a5ff;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .filters-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-input {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            width: 250px;
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .pr-table {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .table th {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+        }
+
+        .table td {
+            border-color: var(--border);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .pr-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pr-title:hover {
+            color: var(--accent);
+        }
+
+        .pr-number {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .pr-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-open {
+            background-color: rgba(35, 134, 54, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-draft {
+            background-color: rgba(125, 133, 144, 0.15);
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+        }
+
+        .status-merged {
+            background-color: rgba(165, 165, 255, 0.15);
+            color: var(--purple);
+            border: 1px solid var(--purple);
+        }
+
+        .status-closed {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .author-name {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .pr-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #1a7431;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            border-color: var(--warning);
+            color: #000;
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .changes-summary {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .changes-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .additions {
+            color: var(--success);
+        }
+
+        .deletions {
+            color: var(--danger);
+        }
+
+        .files-changed {
+            color: var(--text-secondary);
+        }
+
+        .pr-labels {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .label {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            border: 1px solid var(--border);
+        }
+
+        .label.bug {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .label.feature {
+            background-color: rgba(35, 134, 54, 0.15);
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        .label.enhancement {
+            background-color: rgba(88, 166, 255, 0.15);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border);
+        }
+
+        .diff-viewer {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .diff-file {
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .diff-file-header {
+            background-color: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .diff-line {
+            display: flex;
+            padding: 0.25rem 0;
+            font-size: 0.8rem;
+        }
+
+        .line-number {
+            width: 60px;
+            text-align: right;
+            padding-right: 1rem;
+            color: var(--text-secondary);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .line-content {
+            flex: 1;
+            padding-left: 0.5rem;
+            white-space: pre-wrap;
+        }
+
+        .diff-line.added {
+            background-color: rgba(35, 134, 54, 0.15);
+        }
+
+        .diff-line.removed {
+            background-color: rgba(248, 81, 73, 0.15);
+        }
+
+        .diff-line.added .line-content {
+            color: var(--success);
+        }
+
+        .diff-line.removed .line-content {
+            color: var(--danger);
+        }
+
+        .review-comments {
+            margin-top: 1.5rem;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comment-time {
+            color: var(--text-secondary);
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-wrap: wrap;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+{% endblock css %}
+
+{% block nav %} {% endblock nav %}
+
+{% block content %}
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="{% url 'dashboard' %}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+                <h1 class="page-title">
+                    <i class="fas fa-code-branch"></i>
+                    Pull Requests
+                </h1>
+            </div>
+            <div class="navbar-right">
+                <button class="btn btn-primary" onclick="createPR()">
+                    <i class="fas fa-plus me-2"></i>New Pull Request
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <span class="stat-number">8</span>
+                <div class="stat-label">Open PRs</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">23</span>
+                <div class="stat-label">Merged This Month</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">2</span>
+                <div class="stat-label">Awaiting Review</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">1.2</span>
+                <div class="stat-label">Avg Review Time (days)</div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <select class="filter-select" id="statusFilter" onchange="filterPRs()">
+                    <option value="all">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="draft">Draft</option>
+                    <option value="merged">Merged</option>
+                    <option value="closed">Closed</option>
+                </select>
+
+                <select class="filter-select" id="authorFilter" onchange="filterPRs()">
+                    <option value="all">All Authors</option>
+                    <option value="me">Created by me</option>
+                    <option value="assigned">Assigned to me</option>
+                    <option value="review">Waiting for my review</option>
+                </select>
+
+                <select class="filter-select" id="sortFilter" onchange="filterPRs()">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="updated">Recently updated</option>
+                    <option value="comments">Most discussed</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <input type="text" class="search-input" placeholder="Search pull requests..." id="searchInput" onkeyup="searchPRs()">
+            </div>
+        </div>
+
+        <!-- Pull Requests Table -->
+        <div class="pr-table">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pull Request</th>
+                            <th>Status</th>
+                            <th>Author</th>
+                            <th>Changes</th>
+                            <th>Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prTableBody">
+                        <tr onclick="showPRDetails('123')">
+                            <td>
+                                <a href="#" class="pr-title" onclick="event.stopPropagation(); showPRDetails('123')">
+                                    <i class="fas fa-code-branch me-2"></i>
+                                    Add neural network optimization
+                                    <span class="pr-number">#123</span>
+                                </a>
+                                <div class="pr-meta">
+                                    Implement advanced optimization techniques for better performance
+                                </div>
+                                <div class="pr-labels mt-2">
+                                    <span class="label feature">feature</span>
+                                    <span class="label enhancement">enhancement</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="pr-status status-open">
+                                    <i class="fas fa-dot-circle"></i>
+                                    Open
+                                </span>
+                            </td>
+                            <td>
+                                <div class="author-info">
+                                    <div class="author-avatar" style="background-color: #58a6ff;">JD</div>
+                                    <span class="author-name">John Doe</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="changes-summary">
+                                    <div class="changes-item additions">
+                                        <i class="fas fa-plus"></i>
+                                        +156
+                                    </div>
+                                    <div class="changes-item deletions">
+                                        <i class="fas fa-minus"></i>
+                                        -42
+                                    </div>
+                                    <div class="changes-item files-changed">
+                                        <i class="fas fa-file"></i>
+                                        5 files
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pr-meta">2 hours ago</div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm" onclick="event.stopPropagation(); reviewPR('123')">
+                                        <i class="fas fa-eye me-1"></i>Review
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="event.stopPropagation(); mergePR('123')">
+                                        <i class="fas fa-code-branch me-1"></i>Merge
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr onclick="showPRDetails('122')">
+                            <td>
+                                <a href="#" class="pr-title" onclick="event.stopPropagation(); showPRDetails('122')">
+                                    <i class="fas fa-code-branch me-2"></i>
+                                    Fix memory leak in chatbot module
+                                    <span class="pr-number">#122</span>
+                                </a>
+                                <div class="pr-meta">
+                                    Resolves issue with memory not being freed after conversations
+                                </div>
+                                <div class="pr-labels mt-2">
+                                    <span class="label bug">bug</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="pr-status status-merged">
+                                    <i class="fas fa-check"></i>
+                                    Merged
+                                </span>
+                            </td>
+                            <td>
+                                <div class="author-info">
+                                    <div class="author-avatar" style="background-color: #f85149;">SM</div>
+                                    <span class="author-name">Sarah Miller</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="changes-summary">
+                                    <div class="changes-item additions">
+                                        <i class="fas fa-plus"></i>
+                                        +23
+                                    </div>
+                                    <div class="changes-item deletions">
+                                        <i class="fas fa-minus"></i>
+                                        -15
+                                    </div>
+                                    <div class="changes-item files-changed">
+                                        <i class="fas fa-file"></i>
+                                        2 files
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pr-meta">1 day ago</div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="event.stopPropagation(); showPRDetails('122')">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr onclick="showPRDetails('121')">
+                            <td>
+                                <a href="#" class="pr-title" onclick="event.stopPropagation(); showPRDetails('121')">
+                                    <i class="fas fa-code-branch me-2"></i>
+                                    Update dependencies and security patches
+                                    <span class="pr-number">#121</span>
+                                </a>
+                                <div class="pr-meta">
+                                    Bump tensorflow and transformers to latest versions
+                                </div>
+                                <div class="pr-labels mt-2">
+                                    <span class="label">dependencies</span>
+                                    <span class="label">security</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="pr-status status-draft">
+                                    <i class="fas fa-edit"></i>
+                                    Draft
+                                </span>
+                            </td>
+                            <td>
+                                <div class="author-info">
+                                    <div class="author-avatar" style="background-color: #238636;">AK</div>
+                                    <span class="author-name">Alex Kim</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="changes-summary">
+                                    <div class="changes-item additions">
+                                        <i class="fas fa-plus"></i>
+                                        +8
+                                    </div>
+                                    <div class="changes-item deletions">
+                                        <i class="fas fa-minus"></i>
+                                        -5
+                                    </div>
+                                    <div class="changes-item files-changed">
+                                        <i class="fas fa-file"></i>
+                                        3 files
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pr-meta">3 days ago</div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); reviewPR('121')">
+                                        <i class="fas fa-eye me-1"></i>Review Draft
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr onclick="showPRDetails('120')">
+                            <td>
+                                <a href="#" class="pr-title" onclick="event.stopPropagation(); showPRDetails('120')">
+                                    <i class="fas fa-code-branch me-2"></i>
+                                    Add comprehensive unit tests
+                                    <span class="pr-number">#120</span>
+                                </a>
+                                <div class="pr-meta">
+                                    Increase test coverage to 85% for core modules
+                                </div>
+                                <div class="pr-labels mt-2">
+                                    <span class="label">testing</span>
+                                    <span class="label enhancement">enhancement</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="pr-status status-closed">
+                                    <i class="fas fa-times-circle"></i>
+                                    Closed
+                                </span>
+                            </td>
+                            <td>
+                                <div class="author-info">
+                                    <div class="author-avatar" style="background-color: #d29922;">MB</div>
+                                    <span class="author-name">Mike Brown</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="changes-summary">
+                                    <div class="changes-item additions">
+                                        <i class="fas fa-plus"></i>
+                                        +245
+                                    </div>
+                                    <div class="changes-item deletions">
+                                        <i class="fas fa-minus"></i>
+                                        -12
+                                    </div>
+                                    <div class="changes-item files-changed">
+                                        <i class="fas fa-file"></i>
+                                        8 files
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pr-meta">5 days ago</div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="event.stopPropagation(); showPRDetails('120')">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PR Details Modal -->
+    <div class="modal fade" id="prDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="fas fa-code-branch me-2"></i>
+                        Pull Request Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pr-details-content" id="prDetailsContent">
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="approveBtn" onclick="approvePR()">
+                        <i class="fas fa-check me-2"></i>Approve & Merge
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+
+{% block js %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const prData = {
+            '123': {
+                title: 'Add neural network optimization',
+                number: 123,
+                author: { name: 'Nihal Pandit', avatar: 'NP', color: '#58a6ff' },
+                status: 'open',
+                description: 'This PR implements advanced optimization techniques for better performance in our neural network models.',
+                changes: { additions: 156, deletions: 42, files: 5 },
+                labels: ['feature', 'enhancement'],
+                comments: [
+                    {
+                        author: { name: 'Tanishq kumar', avatar: 'TK', color: '#f85149' },
+                        time: '2 hours ago',
+                        text: 'Great work! The optimization looks solid. Could you add some benchmarks to show the performance improvement?'
+                    },
+                    {
+                        author: { name: 'pratik pathak', avatar: 'PP', color: '#238636' },
+                        time: '1 hour ago',
+                        text: 'I agree with Sarah. Also, please make sure all tests are passing before we merge.'
+                    }
+                ],
+                diff: `class NeuralOptimizer:
+    def __init__(self, learning_rate=0.001):
++       self.learning_rate = learning_rate
++       self.momentum = 0.9
++       self.adaptive_lr = True
+
+    def optimize(self, gradients):
+-       return gradients * self.learning_rate
++       if self.adaptive_lr:
++           return self._adaptive_optimize(gradients)
++       return gradients * self.learning_rate
++
++   def _adaptive_optimize(self, gradients):
++       # Implement Adam optimizer
++       return self._adam_update(gradients)`
+            },
+            '122': {
+                title: 'Fix memory leak in chatbot module',
+                number: 122,
+                author: { name: 'Tanishq kumar', avatar: 'TK', color: '#f85149' },
+                status: 'merged',
+                description: 'This PR fixes a critical memory leak that was occurring in the chatbot conversation handler.',
+                changes: { additions: 23, deletions: 15, files: 2 },
+                labels: ['bug'],
+                comments: [
+                    {
+                        author: { name: 'Nihal Pandit', avatar: 'NP', color: '#58a6ff' },
+                        time: '1 day ago',
+                        text: 'Excellent fix! The memory usage graphs look much better now.'
+                    }
+                ],
+                diff: `def handle_conversation(self, user_input):
+    response = self.generate_response(user_input)
+    self.conversation_history.append((user_input, response))
++
++   # Clear old conversations to prevent memory leak
++   if len(self.conversation_history) > 1000:
++       self.conversation_history = self.conversation_history[-500:]
++
+    return response`
+            }
+        };
+
+        function showPRDetails(prId) {
+            const pr = prData[prId];
+            if (!pr) return;
+
+            const modal = new bootstrap.Modal(document.getElementById('prDetailsModal'));
+            const content = document.getElementById('prDetailsContent');
+
+            content.innerHTML = `
+                <div class="pr-header mb-4">
+                    <h4>${pr.title} <span class="text-secondary">#${pr.number}</span></h4>
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                        <span class="pr-status status-${pr.status}">
+                            <i class="fas ${pr.status === 'open' ? 'fa-dot-circle' : pr.status === 'merged' ? 'fa-check' : 'fa-times-circle'}"></i>
+                            ${pr.status.charAt(0).toUpperCase() + pr.status.slice(1)}
+                        </span>
+                        <div class="author-info">
+                            <div class="author-avatar" style="background-color: ${pr.author.color};">${pr.author.avatar}</div>
+                            <span class="author-name">${pr.author.name}</span>
+                        </div>
+                        <div class="changes-summary">
+                            <div class="changes-item additions me-3">
+                                <i class="fas fa-plus"></i> +${pr.changes.additions}
+                            </div>
+                            <div class="changes-item deletions me-3">
+                                <i class="fas fa-minus"></i> -${pr.changes.deletions}
+                            </div>
+                            <div class="changes-item files-changed">
+                                <i class="fas fa-file"></i> ${pr.changes.files} files
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pr-description mb-4">
+                    <h6>Description</h6>
+                    <p>${pr.description}</p>
+                </div>
+
+                <div class="diff-viewer mb-4">
+                    <h6>Code Changes</h6>
+                    <div class="diff-file">
+                        <div class="diff-file-header">
+                            <i class="fas fa-file-code me-2"></i>
+                            src/optimizer.py
+                        </div>
+                        <div class="diff-content p-3">
+                            ${pr.diff.split('\n').map(line => {
+                                let className = '';
+                                if (line.startsWith('+')) className = 'added';
+                                else if (line.startsWith('-')) className = 'removed';
+
+                                return `<div class="diff-line ${className}">
+                                    <span class="line-number">${Math.floor(Math.random() * 100) + 1}</span>
+                                    <span class="line-content">${line}</span>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-comments">
+                    <h6>Comments & Reviews</h6>
+                    ${pr.comments.map(comment => `
+                        <div class="comment-item">
+                            <div class="comment-avatar" style="background-color: ${comment.author.color};">
+                                ${comment.author.avatar}
+                            </div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">${comment.author.name}</span>
+                                    <span class="comment-time">${comment.time}</span>
+                                </div>
+                                <div class="comment-text">${comment.text}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            modal.show();
+        }
+
+        function createPR() {
+            alert('Create Pull Request functionality would open a form to create a new PR');
+        }
+
+        function reviewPR(prId) {
+            alert(`Opening review interface for PR #${prId}`);
+        }
+
+        function mergePR(prId) {
+            if (confirm(`Are you sure you want to merge PR #${prId}?`)) {
+                alert(`PR #${prId} has been merged successfully!`);
+                // Update the UI to reflect the merge
+                location.reload();
+            }
+        }
+
+        function approvePR() {
+            alert('PR approved and merged successfully!');
+            document.getElementById('prDetailsModal').querySelector('[data-bs-dismiss="modal"]').click();
+        }
+
+        function filterPRs() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const authorFilter = document.getElementById('authorFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+
+            console.log('Filtering PRs:', { statusFilter, authorFilter, sortFilter });
+            // In a real app, this would filter the table rows
+        }
+
+        function searchPRs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#prTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // In a real app, this would poll for PR updates
+            console.log('Checking for PR updates...');
+        }, 30000);
+    </script>
+{% endblock js %}

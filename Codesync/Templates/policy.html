@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Privacy Policy {% endblock title %}
+{% block css %}
+   <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --border: #30363d;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .content-section {
+            padding: 60px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .content-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            padding: 0.5rem 0;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+
+        h2 {
+            color: var(--text-primary);
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 1.5rem 0 0.75rem 0;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .last-updated {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'privacy' %}">Privacy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'terms' %}">Terms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+   <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">Privacy Policy</h1>
+            <p style="font-size: 1.1rem; color: var(--text-secondary);">
+                How we collect, use, and protect your information
+            </p>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="sidebar">
+                        <h5 style="color: var(--text-primary); margin-bottom: 1rem;">Contents</h5>
+                        <a href="#overview" class="nav-link active">Overview</a>
+                        <a href="#information-we-collect" class="nav-link">Information We Collect</a>
+                        <a href="#how-we-use" class="nav-link">How We Use Information</a>
+                        <a href="#sharing" class="nav-link">Information Sharing</a>
+                        <a href="{% url 'security' %}" class="nav-link">Data Security</a>
+                        <a href="#cookies" class="nav-link">Cookies</a>
+                        <a href="#your-rights" class="nav-link">Your Rights</a>
+                        <a href="{% url 'contact' %}" class="nav-link">Contact Us</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="content-card">
+                        <div class="last-updated">
+                            <i class="fas fa-calendar me-2"></i>
+                            Last updated: March 15, 2024
+                        </div>
+
+                        <div id="overview">
+                            <h2>Overview</h2>
+                            <p>
+                                At CodeSync AI, we take your privacy seriously. This Privacy Policy explains how we collect,
+                                use, disclose, and safeguard your information when you use our collaborative coding platform
+                                and AI-powered development tools.
+                            </p>
+
+                            <div class="highlight-box">
+                                <strong>Key Points:</strong>
+                                <ul style="margin-bottom: 0;">
+                                    <li>We only collect information necessary to provide our services</li>
+                                    <li>Your code and projects remain private and are never used to train AI models without consent</li>
+                                    <li>We use industry-standard security measures to protect your data</li>
+                                    <li>You have control over your data and can delete it at any time</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div id="information-we-collect">
+                            <h2>Information We Collect</h2>
+
+                            <h3>Information You Provide</h3>
+                            <ul>
+                                <li><strong>Account Information:</strong> Name, email address, username, profile picture</li>
+                                <li><strong>Project Content:</strong> Code, comments, commit messages, and project metadata</li>
+                                <li><strong>Communication:</strong> Messages sent through our platform, support requests</li>
+                                <li><strong>Payment Information:</strong> Billing address and payment method (processed by third-party providers)</li>
+                            </ul>
+
+                            <h3>Automatically Collected Information</h3>
+                            <ul>
+                                <li><strong>Usage Data:</strong> Features used, time spent, interaction patterns</li>
+                                <li><strong>Device Information:</strong> IP address, browser type, operating system</li>
+                                <li><strong>Performance Data:</strong> Error logs, response times, system performance metrics</li>
+                            </ul>
+                        </div>
+
+                        <div id="how-we-use">
+                            <h2>How We Use Your Information</h2>
+                            <p>We use the collected information for the following purposes:</p>
+
+                            <h3>Service Provision</h3>
+                            <ul>
+                                <li>Provide and maintain our collaborative coding platform</li>
+                                <li>Enable real-time collaboration features</li>
+                                <li>Generate AI-powered code suggestions and analysis</li>
+                                <li>Synchronize your projects across devices</li>
+                            </ul>
+
+                            <h3>Communication</h3>
+                            <ul>
+                                <li>Send important updates about our services</li>
+                                <li>Respond to your support requests and inquiries</li>
+                                <li>Send marketing communications (with your consent)</li>
+                            </ul>
+
+                            <h3>Improvement and Analytics</h3>
+                            <ul>
+                                <li>Analyze usage patterns to improve our services</li>
+                                <li>Monitor system performance and security</li>
+                                <li>Develop new features and functionality</li>
+                            </ul>
+                        </div>
+
+                        <div id="sharing">
+                            <h2>Information Sharing and Disclosure</h2>
+                            <p>We do not sell, trade, or otherwise transfer your personal information to third parties, except as described below:</p>
+
+                            <h3>Service Providers</h3>
+                            <p>
+                                We may share information with trusted third-party service providers who assist us in operating
+                                our platform, such as cloud hosting, payment processing, and analytics services.
+                            </p>
+
+                            <h3>Legal Requirements</h3>
+                            <p>
+                                We may disclose your information if required to do so by law or in response to valid requests
+                                by public authorities.
+                            </p>
+
+                            <h3>Business Transfers</h3>
+                            <p>
+                                In the event of a merger, acquisition, or sale of assets, your information may be transferred
+                                as part of that transaction.
+                            </p>
+                        </div>
+
+                        <div id="security">
+                            <h2>Data Security</h2>
+                            <p>We implement comprehensive security measures to protect your information:</p>
+
+                            <div class="highlight-box">
+                                <ul style="margin-bottom: 0;">
+                                    <li><strong>Encryption:</strong> All data is encrypted in transit and at rest</li>
+                                    <li><strong>Access Controls:</strong> Strict access controls and authentication requirements</li>
+                                    <li><strong>Monitoring:</strong> Continuous security monitoring and threat detection</li>
+                                    <li><strong>Compliance:</strong> SOC 2 Type II certification and regular security audits</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div id="cookies">
+                            <h2>Cookies and Tracking Technologies</h2>
+                            <p>We use cookies and similar technologies to:</p>
+                            <ul>
+                                <li>Maintain your login session</li>
+                                <li>Remember your preferences and settings</li>
+                                <li>Analyze usage patterns and improve our services</li>
+                                <li>Provide personalized AI suggestions</li>
+                            </ul>
+                            <p>
+                                You can control cookie settings through your browser preferences. However, disabling
+                                certain cookies may limit the functionality of our platform.
+                            </p>
+                        </div>
+
+                        <div id="your-rights">
+                            <h2>Your Rights and Choices</h2>
+                            <p>You have the following rights regarding your personal information:</p>
+
+                            <h3>Access and Portability</h3>
+                            <ul>
+                                <li>Request access to your personal information</li>
+                                <li>Export your projects and data</li>
+                            </ul>
+
+                            <h3>Correction and Deletion</h3>
+                            <ul>
+                                <li>Update or correct your account information</li>
+                                <li>Delete your account and associated data</li>
+                            </ul>
+
+                            <h3>Communication Preferences</h3>
+                            <ul>
+                                <li>Opt out of marketing communications</li>
+                                <li>Manage notification settings</li>
+                            </ul>
+
+                            <div class="highlight-box">
+                                <p>
+                                    To exercise these rights, contact us at <a href="mailto:privacy@codesync.ai">privacy@codesync.ai</a>
+                                    or use the data controls in your account settings.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="contact">
+                            <h2>Contact Information</h2>
+                            <p>If you have questions about this Privacy Policy or our data practices, please contact us:</p>
+
+                            <div style="background-color: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px;">
+                                <p><strong>Email:</strong> <a href="mailto:privacy@codesync.ai">privacy@codesync.ai</a></p>
+                                <p><strong>Address:</strong><br>CodeSync AI<br>123 Innovation Drive<br>San Francisco, CA 94105</p>
+                                <p style="margin-bottom: 0;"><strong>Data Protection Officer:</strong> Available upon request</p>
+                            </div>
+
+                            <h2 style="margin-top: 2rem;">Changes to This Policy</h2>
+                            <p>
+                                We may update this Privacy Policy from time to time. We will notify you of any changes by
+                                posting the new Privacy Policy on this page and updating the "Last updated" date.
+                                Continued use of our services after changes constitutes acceptance of the updated policy.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+   <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Sidebar navigation
+            $('.nav-link').click(function(e) {
+                e.preventDefault();
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                var target = $(this).attr('href');
+                $('html, body').animate({
+                    scrollTop: $(target).offset().top - 100
+                }, 500);
+            });
+
+            // Scroll spy
+            $(window).scroll(function() {
+                var scrollPos = $(window).scrollTop() + 150;
+
+                $('[id]').each(function() {
+                    var currLink = $(this);
+                    if (currLink.position().top <= scrollPos && currLink.position().top + currLink.height() > scrollPos) {
+                        $('.nav-link').removeClass('active');
+                        $('a[href="#' + currLink.attr('id') + '"]').addClass('active');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock js %}

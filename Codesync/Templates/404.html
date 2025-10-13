@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | CodeSync AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #f85149;
+            --gradient-primary: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);
+            --gradient-secondary: linear-gradient(135deg, #21262d 0%, #161b22 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .floating-code {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--accent);
+            animation: float 20s infinite linear;
+            white-space: nowrap;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(-50px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 404 Number Animation */
+        .error-code {
+            font-size: clamp(8rem, 15vw, 12rem);
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+        }
+
+        .error-code::before,
+        .error-code::after {
+            content: '404';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-code::before {
+            animation: glitch-1 2s infinite;
+            z-index: -1;
+        }
+
+        .error-code::after {
+            animation: glitch-2 2s infinite;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% {
+                transform: translate(0);
+                filter: hue-rotate(0deg);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+                filter: hue-rotate(90deg);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+                filter: hue-rotate(180deg);
+            }
+            60% {
+                transform: translate(2px, 2px);
+                filter: hue-rotate(270deg);
+            }
+            80% {
+                transform: translate(2px, -2px);
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% {
+                transform: translate(0);
+                filter: hue-rotate(0deg);
+            }
+            20% {
+                transform: translate(2px, -2px);
+                filter: hue-rotate(45deg);
+            }
+            40% {
+                transform: translate(2px, 2px);
+                filter: hue-rotate(135deg);
+            }
+            60% {
+                transform: translate(-2px, -2px);
+                filter: hue-rotate(225deg);
+            }
+            80% {
+                transform: translate(-2px, 2px);
+                filter: hue-rotate(315deg);
+            }
+        }
+
+        /* Error Message */
+        .error-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .error-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Robot Icon */
+        .robot-container {
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .robot-icon {
+            font-size: 4rem;
+            color: var(--accent);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Search Box */
+        .search-container {
+            margin: 2rem 0;
+            position: relative;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Suggestions */
+        .suggestions {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .suggestions h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .suggestion-list {
+            list-style: none;
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .suggestion-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-tertiary);
+        }
+
+        .suggestion-item a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .suggestion-item i {
+            color: var(--accent);
+            width: 20px;
+        }
+
+        /* Footer */
+        .error-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .error-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .error-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .suggestion-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 6rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Main Error Container -->
+    <div class="error-container">
+        <!-- 404 Code -->
+        <div class="error-code">404</div>
+
+        <!-- Robot Icon -->
+        <div class="robot-container">
+            <i class="fas fa-robot robot-icon"></i>
+        </div>
+
+        <!-- Error Messages -->
+        <h1 class="error-title">Oops! Page Not Found</h1>
+        <p class="error-subtitle">
+            The page you're looking for seems to have vanished into the digital void. 
+            Don't worry, even the best developers get lost sometimes!
+        </p>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <div style="position: relative;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Search for repositories, files, or documentation..." id="searchInput">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <a href="{% url 'index' %}" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Back to Dashboard
+            </a>
+            <button onclick="goBack()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Go Back
+            </button>
+            <a href="{% url 'repo' %}" class="btn btn-secondary">
+                <i class="fas fa-folder"></i>
+                Browse Repositories
+            </a>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="suggestions">
+            <h3>Popular Destinations</h3>
+            <ul class="suggestion-list">
+                <li class="suggestion-item">
+                    <a href="{% url 'index' %}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard - Your project overview
+                    </a>
+                </li>
+                <li class="suggestion-item">
+                    <a href="{% url 'repo' %}">
+                        <i class="fas fa-folder-open"></i>
+                        My Repositories - View your projects
+                    </a>
+                </li>
+                <li class="suggestion-item">
+                    <a href="{% url 'pulls' %}">
+                        <i class="fas fa-code-branch"></i>
+                        Pull Requests - Review code changes
+                    </a>
+                </li>
+                <li class="suggestion-item">
+                    <a href="{% url 'setting' %}">
+                        <i class="fas fa-cog"></i>
+                        Settings - Customize your experience
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="error-footer">
+            <p>
+                Still can't find what you're looking for? 
+                <a href="#" onclick="reportIssue()">Report this issue</a> or 
+                <a href="#" onclick="contactSupport()">contact support</a>.
+            </p>
+            <p style="margin-top: 1rem;">
+                <i class="fas fa-code"></i> CodeSync AI - Making development smarter
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Animated background code snippets
+        function createFloatingCode() {
+            const codeSnippets = [
+                'function notFound() { return 404; }',
+                'git commit -m "fix: page not found"',
+                'const page = null; // TODO: implement',
+                'if (page === undefined) throw new Error();',
+                'SELECT * FROM pages WHERE id = 404;',
+                'console.log("Where did the page go?");',
+                'import { Page } from "./components/404";',
+                'def find_page(): return None',
+                'curl -X GET /api/page/404',
+                'npm install --save page-finder',
+                '// This page intentionally left blank',
+                'docker run --rm page-not-found',
+                'kubectl get pods | grep missing',
+                'terraform apply -target=page.404'
+            ];
+
+            const bgAnimation = document.getElementById('bgAnimation');
+            
+            setInterval(() => {
+                const snippet = document.createElement('div');
+                snippet.className = 'floating-code';
+                snippet.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                snippet.style.left = Math.random() * 100 + '%';
+                snippet.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                snippet.style.fontSize = (Math.random() * 8 + 10) + 'px';
+                
+                bgAnimation.appendChild(snippet);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (snippet.parentNode) {
+                        snippet.parentNode.removeChild(snippet);
+                    }
+                }, 25000);
+            }, 2000);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    // Simulate search - in real app, redirect to search results
+                    showNotification('Searching for: ' + query, 'info');
+                    setTimeout(() => {
+                        window.location.href = `{% url 'index' %}?search=${encodeURIComponent(query)}`;
+                    }, 1000);
+                }
+            }
+        });
+
+        // Go back function
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '{% url "index" %}';
+            }
+        }
+
+        // Report issue function
+        function reportIssue() {
+            showNotification('Issue report feature coming soon!', 'info');
+        }
+
+        // Contact support function
+        function contactSupport() {
+            showNotification('Redirecting to support...', 'info');
+            // In real app: window.location.href = '/support/';
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-info-circle" style="color: var(--accent);"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingCode();
+            
+            // Add some initial floating code
+            setTimeout(createFloatingCode, 500);
+            setTimeout(createFloatingCode, 1000);
+            setTimeout(createFloatingCode, 1500);
+        });
+
+        // Easter egg - Konami code
+        let konamiCode = [];
+        const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.length === konamiSequence.length && 
+                konamiCode.every((code, index) => code === konamiSequence[index])) {
+                showNotification('🎉 Easter egg found! You are a true developer!', 'success');
+                document.querySelector('.robot-icon').style.animation = 'spin 2s linear infinite';
+            }
+        });
+    </script>
+</body>
+</html>

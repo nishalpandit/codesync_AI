@@ -1,0 +1,792 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - About Us {% endblock title%}
+{% block css %}
+ <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(88, 166, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mission-section {
+            padding: 100px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .mission-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--success) 100%);
+        }
+
+        .mission-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 2rem;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .story-section {
+            padding: 100px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .story-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .story-text h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .story-image {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .code-animation {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            text-align: left;
+        }
+
+        .values-section {
+            padding: 100px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .value-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(88, 166, 255, 0.1);
+        }
+
+        .value-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .value-icon.innovation {
+            background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);
+            color: white;
+        }
+
+        .value-icon.collaboration {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            color: #064e3b;
+        }
+
+        .value-icon.excellence {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #451a03;
+        }
+
+        .value-icon.transparency {
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .value-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .value-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .team-section {
+            padding: 100px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(88, 166, 255, 0.1);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .team-bio {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .stats-section {
+            padding: 80px 0;
+            background-color: var(--bg-tertiary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            text-align: center;
+        }
+
+        .cta-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            padding: 50px 0 30px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .story-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .values-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mission-card,
+            .cta-card {
+                padding: 2rem;
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .typing-animation {
+            border-right: 2px solid var(--accent);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: var(--accent); }
+            51%, 100% { border-color: transparent; }
+        }
+    </style>
+{% endblock css%}
+{% block nav %} {% endblock nav %}
+{% block content %}
+ <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="about">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Revolutionizing Code Collaboration</h1>
+                <p class="hero-subtitle">
+                    We're building the future where AI and human creativity combine to create extraordinary software,
+                    making coding more collaborative, intelligent, and accessible for developers worldwide.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="mission-card">
+                        <div class="mission-icon animate-float">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h2 style="font-size: 2rem; color: var(--text-primary); margin-bottom: 1.5rem;">Our Mission</h2>
+                        <p style="font-size: 1.2rem; line-height: 1.8; color: var(--text-secondary);">
+                            To democratize software development by combining the power of artificial intelligence with
+                            real-time collaboration, enabling developers of all skill levels to build better software
+                            faster, together. We believe that the best code is written when human creativity meets AI intelligence.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="story-section">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            <div class="story-content">
+                <div class="story-text">
+                    <h3>Born from Developer Frustration</h3>
+                    <p>
+                        CodeSync AI was born in 2023 when our founders, experienced software engineers from leading tech companies,
+                        faced the same frustrations developers encounter daily: fragmented collaboration tools, repetitive debugging,
+                        and the constant context switching between different platforms.
+                    </p>
+                    <p>
+                        We envisioned a world where coding would be as collaborative as working on a Google Doc, as intelligent as
+                        having a senior developer by your side, and as seamless as having all your tools in one place.
+                    </p>
+                    <p>
+                        Today, CodeSync AI serves over 50,000 developers across 120+ countries, helping teams ship code 3x faster
+                        while reducing bugs by 90%. We're just getting started.
+                    </p>
+                </div>
+                <div class="story-image">
+                    <div class="code-animation">
+                        <div style="color: var(--accent); margin-bottom: 1rem;">// The journey begins with a simple idea</div>
+                        <div><span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">revolutionizeCode</span>() {</div>
+                        <div>  <span style="color: #7ee787;">const</span> <span style="color: #ffa657;">vision</span> = <span style="color: #a5d6ff;">"Better collaboration"</span>;</div>
+                        <div>  <span style="color: #7ee787;">const</span> <span style="color: #ffa657;">ai</span> = <span style="color: #a5d6ff;">"Intelligent assistance"</span>;</div>
+                        <div>  <span style="color: #7ee787;">const</span> <span style="color: #ffa657;">community</span> = <span style="color: #a5d6ff;">"Global developers"</span>;</div>
+                        <div>  </div>
+                        <div>  <span style="color: #ff7b72;">return</span> vision + ai + community;</div>
+                        <div>}</div>
+                        <div style="margin-top: 1rem; color: var(--success);">// Result: CodeSync AI ✨</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" data-count="50000">0</span>
+                    <div class="stat-label">Active Developers</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="120">0</span>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="2500000">0</span>
+                    <div class="stat-label">Lines of Code</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="99.9">0</span>
+                    <div class="stat-label">Uptime %</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <h2 class="section-title">Our Core Values</h2>
+            <p class="section-subtitle">
+                The principles that guide everything we do and every decision we make
+            </p>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon innovation">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="value-title">Innovation First</h3>
+                    <p class="value-description">
+                        We constantly push boundaries, exploring new technologies and methodologies to solve
+                        complex problems. Innovation isn't just what we do—it's who we are.
+                    </p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon collaboration">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="value-title">Collaboration</h3>
+                    <p class="value-description">
+                        Great software is built by great teams. We foster environments where diverse minds come
+                        together, share ideas freely, and build something extraordinary.
+                    </p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon excellence">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="value-title">Excellence</h3>
+                    <p class="value-description">
+                        We're committed to delivering the highest quality products and experiences. Every feature,
+                        every interaction, every line of code reflects our dedication to excellence.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            <p class="section-subtitle">
+                Passionate developers, designers, and dreamers working together to transform software development
+            </p>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);">
+                        AS
+                    </div>
+                    <h3 class="team-name">Nihal Pandit</h3>
+                    <div class="team-role">CEO & Co-Founder</div>
+                    <p class="team-bio">
+                        Former Lead Engineer at GitHub. 10+ years building developer tools.
+                        Passionate about making coding more accessible and collaborative.
+                    </p>
+                    <div class="team-social">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #34d399 0%, #059669 100%);">
+                        SC
+                    </div>
+                    <h3 class="team-name">Nihal Pandit</h3>
+                    <div class="team-role">CTO & Co-Founder</div>
+                    <p class="team-bio">
+                        AI/ML expert from Google DeepMind. PhD in Computer Science.
+                        Leading our AI research and development initiatives.
+                    </p>
+                    <div class="team-social">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        MJ
+                    </div>
+                    <h3 class="team-name">Nihal Pandit</h3>
+                    <div class="team-role">Head of Design</div>
+                    <p class="team-bio">
+                        Design leader from Figma and Adobe. Specializes in developer experience
+                        and creating intuitive interfaces for complex tools.
+                    </p>
+                    <div class="team-social">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-dribbble"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-behance"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2 style="font-size: 2.5rem; color: var(--text-primary); margin-bottom: 1rem;">
+                    Ready to Transform Your Development?
+                </h2>
+                <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                    Join thousands of developers who are already building better software with CodeSync AI
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'auth' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Get Started Free
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-play me-2"></i>See Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-code-branch me-2"></i>CodeSync AI
+                    </h5>
+                    <p class="text-secondary">
+                        Revolutionizing software development with AI-powered collaboration tools.
+                    </p>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Product</h6>
+                    <div class="footer-links d-flex flex-column">
+                        <a href="{% url 'auth' %}" class="mb-2">Dashboard</a>
+                        <a href="#" class="mb-2">AI Assistant</a>
+                        <a href="{% url 'billing' %}" class="mb-2">Pricing</a>
+                        <a href="#" class="mb-2">Enterprise</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Company</h6>
+                    <div class="footer-links d-flex flex-column">
+                        <a href="{% url 'about' %}" class="mb-2">About</a>
+                        <a href="{% url 'carrer' %}" class="mb-2">Careers</a>
+                        <a href="{% url 'blog' %}" class="mb-2">Blog</a>
+                        <a href="#" class="mb-2">Press</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Resources</h6>
+                    <div class="footer-links d-flex flex-column">
+                        <a href="{% url 'policy' %}" class="mb-2">Documentation</a>
+                        <a href="{% url 'api' %}" class="mb-2">API Reference</a>
+                        <a href="{% url 'community' %}" class="mb-2">Community</a>
+                        <a href="{% url 'help_center' %}" class="mb-2">Support</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Legal</h6>
+                    <div class="footer-links d-flex flex-column">
+                        <a href="{% url 'policy' %}" class="mb-2">Privacy</a>
+                        <a href="{% url 'terms' %}" class="mb-2">Terms</a>
+                        <a href="{% url 'security' %}" class="mb-2">Security</a>
+                        <a href="{% url 'status' %}" class="mb-2">Status</a>
+                    </div>
+                </div>
+            </div>
+                      <hr class="my-4" style="border-color: var(--border);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-secondary mb-0">&copy; 2024 CodeSync AI. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <div class="footer-links d-flex justify-content-md-end gap-3">
+                        <a href="{% url 'policy' %}" class="text-secondary">Privacy Policy</a>
+                        <a href="{% url 'terms' %}" class="text-secondary">Terms of Service</a>
+                        <a href="{% url 'contact' %}" class="text-secondary">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock content %}
+{% block js %}
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Counter animation for stats
+        document.querySelectorAll('.stat-number').forEach(el => {
+            const target = +el.getAttribute('data-count');
+            let count = 0;
+            const step = target / 100;
+            const update = () => {
+                count += step;
+                if (count < target) {
+                    el.textContent = Math.floor(count);
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = target;
+                }
+            };
+            update();
+        });
+    </script>
+{% endblock js%}

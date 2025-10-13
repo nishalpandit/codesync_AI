@@ -1,0 +1,725 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Help Center {% endblock title %}
+{% block css %}
+  <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-section {
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 60px;
+        }
+
+        .search-box {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.15);
+        }
+
+        .search-input {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 1rem 1rem 1rem 3rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25), 0 0 20px rgba(88, 166, 255, 0.1);
+            color: var(--text-primary);
+            transform: scale(1.02);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .categories-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .category-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.3);
+        }
+
+        .category-icon.getting-started { background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%); }
+        .category-icon.features { background: linear-gradient(135deg, #34d399 0%, #059669 100%); }
+        .category-icon.troubleshooting { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .category-icon.integrations { background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); }
+        .category-icon.billing { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); }
+        .category-icon.api { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); }
+
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .category-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .article-count {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .popular-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .article-list {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .article-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .article-item:last-child {
+            border-bottom: none;
+        }
+
+        .article-item:hover {
+            background-color: rgba(88, 166, 255, 0.05);
+            transform: translateX(8px);
+            border-left: 3px solid var(--accent);
+            padding-left: 1.8rem;
+        }
+
+        .article-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .article-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .contact-help {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .help-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .help-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(88, 166, 255, 0.12);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .help-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .help-card:hover .help-icon {
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        .help-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .help-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-link {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            color: var(--accent);
+            background-color: rgba(88, 166, 255, 0.1);
+            transform: translateX(5px);
+            border-left: 3px solid var(--accent);
+        }
+
+        .status-widget {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .sidebar {
+                position: static;
+                margin-top: 2rem;
+            }
+
+            .search-section {
+                margin-top: 0;
+                padding-bottom: 40px;
+            }
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+   <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'features' %}">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'help_center' %}">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">Help Center</h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                Find answers, get support, and learn how to make the most of CodeSync AI
+            </p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="search-box">
+                        <div class="position-relative">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Search for help articles, tutorials, and guides..." id="helpSearch">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Browse by Category</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('getting-started')">
+                        <div class="category-icon getting-started">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h4 class="category-title">Getting Started</h4>
+                        <p class="category-description">
+                            Quick start guides and basic setup instructions to get you coding collaboratively.
+                        </p>
+                        <div class="article-count">12 articles</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('features')">
+                        <div class="category-icon features">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h4 class="category-title">Features & Tutorials</h4>
+                        <p class="category-description">
+                            In-depth guides on using AI features, collaboration tools, and advanced functionality.
+                        </p>
+                        <div class="article-count">28 articles</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('troubleshooting')">
+                        <div class="category-icon troubleshooting">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <h4 class="category-title">Troubleshooting</h4>
+                        <p class="category-description">
+                            Solutions for common issues, error messages, and technical problems.
+                        </p>
+                        <div class="article-count">15 articles</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('integrations')">
+                        <div class="category-icon integrations">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h4 class="category-title">Integrations</h4>
+                        <p class="category-description">
+                            Connect with GitHub, Slack, VS Code, and other tools in your workflow.
+                        </p>
+                        <div class="article-count">22 articles</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('billing')">
+                        <div class="category-icon billing">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h4 class="category-title">Billing & Plans</h4>
+                        <p class="category-description">
+                            Manage your subscription, billing information, and understand pricing plans.
+                        </p>
+                        <div class="article-count">8 articles</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" onclick="showCategory('api')">
+                        <div class="category-icon api">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h4 class="category-title">API Documentation</h4>
+                        <p class="category-description">
+                            Technical documentation for developers building with our API and webhooks.
+                        </p>
+                        <div class="article-count">18 articles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Articles Section -->
+    <section class="popular-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2 class="section-title">Popular Articles</h2>
+                    <div class="article-list">
+                        <div class="article-item" onclick="openArticle('setup-guide')">
+                            <h3 class="article-title">How to Set Up Your First Collaborative Project</h3>
+                            <p class="article-excerpt">
+                                A complete step-by-step guide to creating your first collaborative coding project with CodeSync AI, including team invitations and permission settings.
+                            </p>
+                            <div class="article-meta">
+                                <span><i class="fas fa-eye me-1"></i>2.5k views</span>
+                                <span><i class="fas fa-thumbs-up me-1"></i>89% helpful</span>
+                                <span><i class="fas fa-clock me-1"></i>Updated 2 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="article-item" onclick="openArticle('ai-features')">
+                            <h3 class="article-title">Making the Most of AI Code Suggestions</h3>
+                            <p class="article-excerpt">
+                                Learn how to configure and use AI-powered code completion, bug detection, and optimization suggestions to boost your productivity.
+                            </p>
+                            <div class="article-meta">
+                                <span><i class="fas fa-eye me-1"></i>1.8k views</span>
+                                <span><i class="fas fa-thumbs-up me-1"></i>92% helpful</span>
+                                <span><i class="fas fa-clock me-1"></i>Updated 1 week ago</span>
+                            </div>
+                        </div>
+
+                        <div class="article-item" onclick="openArticle('real-time-collab')">
+                            <h3 class="article-title">Real-Time Collaboration Best Practices</h3>
+                            <p class="article-excerpt">
+                                Tips and strategies for effective real-time coding with your team, managing conflicts, and maintaining code quality in collaborative sessions.
+                            </p>
+                            <div class="article-meta">
+                                <span><i class="fas fa-eye me-1"></i>1.5k views</span>
+                                <span><i class="fas fa-thumbs-up me-1"></i>87% helpful</span>
+                                <span><i class="fas fa-clock me-1"></i>Updated 3 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="article-item" onclick="openArticle('github-integration')">
+                            <h3 class="article-title">Integrating with GitHub: Complete Setup Guide</h3>
+                            <p class="article-excerpt">
+                                Connect your CodeSync AI projects with GitHub repositories for seamless version control and automated deployments.
+                            </p>
+                            <div class="article-meta">
+                                <span><i class="fas fa-eye me-1"></i>1.2k views</span>
+                                <span><i class="fas fa-thumbs-up me-1"></i>94% helpful</span>
+                                <span><i class="fas fa-clock me-1"></i>Updated 5 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="article-item" onclick="openArticle('troubleshoot-sync')">
+                            <h3 class="article-title">Troubleshooting Sync Issues</h3>
+                            <p class="article-excerpt">
+                                Common solutions for when your code isn't syncing properly across team members or devices.
+                            </p>
+                            <div class="article-meta">
+                                <span><i class="fas fa-eye me-1"></i>980 views</span>
+                                <span><i class="fas fa-thumbs-up me-1"></i>85% helpful</span>
+                                <span><i class="fas fa-clock me-1"></i>Updated 1 week ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        <h4 class="sidebar-title">Quick Links</h4>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-play-circle me-2"></i>Video Tutorials
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-download me-2"></i>Desktop App Download
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-mobile-alt me-2"></i>Mobile App
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-keyboard me-2"></i>Keyboard Shortcuts
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-users me-2"></i>Team Management
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-shield-alt me-2"></i>Security Settings
+                        </a>
+                        <a href="#" class="quick-link">
+                            <i class="fas fa-bell me-2"></i>Notification Settings
+                        </a>
+
+                        <div class="status-widget">
+                            <h6 class="sidebar-title">System Status</h6>
+                            <div class="status-indicator">
+                                <div class="status-dot"></div>
+                                <span style="color: var(--success); font-weight: 500;">All Systems Operational</span>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 0;">
+                                Last checked: 2 minutes ago
+                            </p>
+                            <a href="{% url 'status' %}" class="btn btn-outline-secondary btn-sm mt-2">
+                                View Status Page
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Help Section -->
+    <section class="contact-help">
+        <div class="container">
+            <h2 class="section-title">Still Need Help?</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4 class="help-title">Live Chat Support</h4>
+                        <p class="help-description">
+                            Get instant help from our support team. Available 24/7 for Pro and Enterprise users.
+                        </p>
+                        <button class="btn btn-primary" onclick="startChat()">
+                            Start Chat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h4 class="help-title">Email Support</h4>
+                        <p class="help-description">
+                            Send us a detailed message and we'll respond within 24 hours on business days.
+                        </p>
+                        <a href="{% url 'contact' %}" class="btn btn-outline-secondary">
+                            Contact Us
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="help-title">Community Forum</h4>
+                        <p class="help-description">
+                            Connect with other developers, share tips, and get help from the community.
+                        </p>
+                        <a href="{% url 'community' %}" class="btn btn-outline-secondary">
+                            Join Community
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Search functionality
+            $('#helpSearch').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                if (searchTerm.length > 2) {
+                    console.log('Searching for:', searchTerm);
+                }
+            });
+
+            // Smooth scrolling
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if(target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+
+        function showCategory(category) {
+            alert('This would show articles in the "' + category + '" category');
+        }
+
+        function openArticle(articleId) {
+            alert('This would open the article: "' + articleId + '"');
+        }
+
+        function startChat() {
+            alert('Live chat would open here. This feature is available for Pro and Enterprise users.');
+        }
+    </script>
+{% endblock js %}

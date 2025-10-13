@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Notepad</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f8f9fa;
+            --bg-dark: #1a1d23;
+            --card-light: #ffffff;
+            --card-dark: #2d3139;
+            --border-light: #dee2e6;
+            --border-dark: #3a3f4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-light);
+            color: #212529;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: #ffffff;
+        }
+
+        .header {
+            background: var(--card-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        body.dark-mode .header {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .main-container {
+            display: flex;
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--card-light);
+            border-right: 1px solid var(--border-light);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode .sidebar {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .note-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .note-item:hover {
+            background: #e9ecef;
+        }
+
+        body.dark-mode .note-item:hover {
+            background: #3a3f4a;
+        }
+
+        .note-item.active {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            background: var(--card-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.75rem 1.5rem;
+        }
+
+        body.dark-mode .toolbar {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        #noteTitle {
+            font-size: 1.75rem;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-bottom: 1rem;
+            background: transparent;
+        }
+
+        body.dark-mode #noteTitle {
+            color: white;
+        }
+
+        #noteContent {
+            width: 100%;
+            height: calc(100% - 60px);
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 1rem;
+            line-height: 1.6;
+            background: transparent;
+        }
+
+        body.dark-mode #noteContent {
+            color: white;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 2px solid white;
+            margin-left: -8px;
+        }
+
+        body.dark-mode .avatar {
+            border-color: var(--card-dark);
+        }
+
+        .btn-toolbar {
+            padding: 0.375rem 0.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-toolbar:hover {
+            background: #e9ecef;
+        }
+
+        body.dark-mode .btn-toolbar:hover {
+            background: #3a3f4a;
+        }
+
+        .typing-indicator {
+            padding: 0.5rem 1.5rem;
+            background: #f8f9fa;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        body.dark-mode .typing-indicator {
+            background: var(--card-dark);
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.5;
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--card-dark);
+            color: white;
+        }
+
+        body.dark-mode input,
+        body.dark-mode textarea {
+            background: var(--bg-dark);
+            color: white;
+            border-color: var(--border-dark);
+        }
+
+        body.dark-mode input::placeholder,
+        body.dark-mode textarea::placeholder {
+            color: #6c757d;
+        }
+
+        .search-input {
+            padding-left: 2.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: #dee2e6;
+            margin: 0 0.5rem;
+        }
+
+        body.dark-mode .divider {
+            background: var(--border-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <h1 class="h5 mb-0">Collaborative Notepad</h1>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <button id="themeToggle" class="btn-toolbar">
+                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <div class="d-flex">
+                    <div class="avatar bg-primary" title="You">Y</div>
+                    <div class="avatar bg-success" title="Alex">A</div>
+                    <div class="avatar" style="background:#9333ea;" title="Sarah">S</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3">
+                <div class="position-relative mb-3">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="text" id="searchInput" class="form-control search-input" placeholder="Search notes...">
+                </div>
+                <button id="newNoteBtn" class="btn btn-primary w-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Note
+                </button>
+            </div>
+            <div id="notesList" class="flex-grow-1 px-3 pb-3"></div>
+        </aside>
+
+        <!-- Main Editor -->
+        <main class="editor-area">
+            <div class="toolbar">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-1">
+                        <button class="btn-toolbar" data-format="bold" title="Bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>
+                        </button>
+                        <button class="btn-toolbar" data-format="italic" title="Italic">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg>
+                        </button>
+                        <button class="btn-toolbar" data-format="underline" title="Underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path><line x1="4" y1="21" x2="20" y2="21"></line></svg>
+                        </button>
+                        <div class="divider"></div>
+                        <button class="btn-toolbar" data-format="list" title="Bullet List">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        </button>
+                        <button class="btn-toolbar" data-format="ordered" title="Numbered List">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div id="saveIndicator" class="text-success small" style="display:none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Saved
+                        </div>
+                        <button id="simulateTypingBtn" class="btn-toolbar" title="Simulate Typing">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+                        </button>
+                        <button id="shareBtn" class="btn btn-primary btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-content">
+                <input type="text" id="noteTitle" placeholder="Note title..." value="">
+                <textarea id="noteContent" placeholder="Start typing your note..."></textarea>
+            </div>
+
+            <div id="typingIndicator" class="typing-indicator" style="display:none;"></div>
+        </main>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Share Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 bg-light rounded">
+                        <code id="shareLink" class="small"></code>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="copyLinkBtn" class="btn btn-primary">Copy Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // State
+        let notes = [];
+        let activeNoteId = '';
+        let isDarkMode = false;
+        let saveTimeout = null;
+
+        // DOM Elements
+        const notesList = document.getElementById('notesList');
+        const noteTitle = document.getElementById('noteTitle');
+        const noteContent = document.getElementById('noteContent');
+        const searchInput = document.getElementById('searchInput');
+        const newNoteBtn = document.getElementById('newNoteBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const shareBtn = document.getElementById('shareBtn');
+        const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const shareLink = document.getElementById('shareLink');
+        const saveIndicator = document.getElementById('saveIndicator');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const simulateTypingBtn = document.getElementById('simulateTypingBtn');
+
+        // Initialize
+        function init() {
+            const savedNotes = JSON.parse(localStorage.getItem('collaborativeNotes') || '[]');
+            if (savedNotes.length > 0) {
+                notes = savedNotes.map(note => ({
+                    ...note,
+                    lastModified: new Date(note.lastModified)
+                }));
+                activeNoteId = notes[0].id;
+            } else {
+                createNewNote();
+            }
+            renderNotes();
+            loadActiveNote();
+        }
+
+        // Create new note
+        function createNewNote() {
+            const newNote = {
+                id: Date.now().toString(),
+                title: 'Untitled Note',
+                content: '',
+                lastModified: new Date(),
+                shared: false
+            };
+            notes.unshift(newNote);
+            activeNoteId = newNote.id;
+            saveNotes();
+            renderNotes();
+            loadActiveNote();
+        }
+
+        // Save notes to storage
+        function saveNotes() {
+            localStorage.setItem('collaborativeNotes', JSON.stringify(notes));
+        }
+
+        // Render notes list
+        function renderNotes(filter = '') {
+            const filteredNotes = notes.filter(note =>
+                note.title.toLowerCase().includes(filter.toLowerCase()) ||
+                note.content.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            notesList.innerHTML = filteredNotes.map(note => `
+                <div class="note-item ${note.id === activeNoteId ? 'active' : ''}" data-id="${note.id}">
+                    <div class="d-flex justify-content-between">
+                        <div class="flex-grow-1" style="min-width:0;">
+                            <h6 class="mb-1 text-truncate">${note.title}</h6>
+                            <p class="mb-2 small text-truncate ${note.id === activeNoteId ? 'text-white-50' : 'text-muted'}">
+                                ${note.content || 'No content'}
+                            </p>
+                            <div class="d-flex align-items-center gap-2 small">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span>${note.lastModified.toLocaleDateString()}</span>
+                                ${note.shared ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>' : ''}
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-link text-danger delete-btn" data-id="${note.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners
+            document.querySelectorAll('.note-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.delete-btn')) {
+                        activeNoteId = item.dataset.id;
+                        renderNotes(filter);
+                        loadActiveNote();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteNote(btn.dataset.id);
+                });
+            });
+        }
+
+        // Load active note
+        function loadActiveNote() {
+            const note = notes.find(n => n.id === activeNoteId);
+            if (note) {
+                noteTitle.value = note.title;
+                noteContent.value = note.content;
+            }
+        }
+
+        // Save current note
+        function saveCurrentNote() {
+            const note = notes.find(n => n.id === activeNoteId);
+            if (note) {
+                note.title = noteTitle.value;
+                note.content = noteContent.value;
+                note.lastModified = new Date();
+                saveNotes();
+                renderNotes(searchInput.value);
+                
+                // Show save indicator
+                saveIndicator.style.display = 'flex';
+                setTimeout(() => {
+                    saveIndicator.style.display = 'none';
+                }, 1000);
+            }
+        }
+
+        // Delete note
+        function deleteNote(id) {
+            notes = notes.filter(n => n.id !== id);
+            if (activeNoteId === id && notes.length > 0) {
+                activeNoteId = notes[0].id;
+            }
+            saveNotes();
+            renderNotes(searchInput.value);
+            loadActiveNote();
+        }
+
+        // Format text
+        function formatText(format) {
+            const textarea = noteContent;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            let formattedText = selectedText;
+            switch(format) {
+                case 'bold':
+                    formattedText = `**${selectedText}**`;
+                    break;
+                case 'italic':
+                    formattedText = `*${selectedText}*`;
+                    break;
+                case 'underline':
+                    formattedText = `__${selectedText}__`;
+                    break;
+                case 'list':
+                    formattedText = `\n• ${selectedText}`;
+                    break;
+                case 'ordered':
+                    formattedText = `\n1. ${selectedText}`;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            saveCurrentNote();
+        }
+
+        // Event Listeners
+        newNoteBtn.addEventListener('click', createNewNote);
+
+        noteTitle.addEventListener('input', () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveCurrentNote, 1000);
+        });
+
+        noteContent.addEventListener('input', () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveCurrentNote, 1000);
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            renderNotes(e.target.value);
+        });
+
+        themeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            document.getElementById('moonIcon').style.display = isDarkMode ? 'none' : 'block';
+            document.getElementById('sunIcon').style.display = isDarkMode ? 'block' : 'none';
+        });
+
+        document.querySelectorAll('[data-format]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                formatText(btn.dataset.format);
+            });
+        });
+
+        shareBtn.addEventListener('click', () => {
+            shareLink.textContent = `https://notepad.app/note/${activeNoteId}`;
+            shareModal.show();
+        });
+
+        copyLinkBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(shareLink.textContent);
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyLinkBtn.textContent = 'Copy Link';
+                shareModal.hide();
+            }, 1500);
+        });
+
+        simulateTypingBtn.addEventListener('click', () => {
+            const users = ['Alex', 'Sarah'];
+            const randomUser = users[Math.floor(Math.random() * users.length)];
+            typingIndicator.textContent = `${randomUser} is typing...`;
+            typingIndicator.style.display = 'block';
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+            }, 2000);
+        });
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>

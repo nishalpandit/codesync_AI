@@ -1,0 +1,469 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI -  Forgot / Change Password {% endblock title %}
+{% block css %}
+ <style>
+    :root{
+      --bg: #0d1117;
+      --panel: #161b22;
+      --muted: #9da7b3;
+      --accent: #58a6ff;
+      --input-bg: #0b0f14;
+      --card-radius: 14px;
+      --success: #21c55e;
+      --error: #f43f5e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,body{height:100%}
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: #e6eef8;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top navbar */
+    .site-navbar {
+      background: rgba(8,8,10,0.9);
+      border-bottom: 1px solid #272b31;
+      padding: 0.6rem 1rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand {
+      color: var(--accent);
+      font-weight:700;
+      letter-spacing:0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-action {
+      background: linear-gradient(135deg,var(--accent),#1f6feb);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 24px;
+      text-decoration:none;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(24,144,255,0.08);
+      transition: transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-action:hover {
+      transform: translateY(-2px);
+      color: white;
+    }
+
+    /* Page center */
+    .container-center {
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 40px 16px;
+    }
+
+    .card-panel {
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border-radius: var(--card-radius);
+      border: 1px solid #202428;
+      padding: 28px;
+      box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+    }
+
+    .card-title {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:center;
+      font-weight:700;
+      color: #dbeafe;
+      margin-bottom: 6px;
+    }
+    .card-title .badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+    .card-sub {
+      color: var(--muted);
+      text-align:center;
+      margin-bottom: 24px;
+    }
+
+    /* Form steps */
+    .step {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* COMPLETELY REDESIGNED INPUT FIELDS WITH PROPER ICON POSITIONING */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 16px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .field .input {
+      width: 100%;
+      height: 50px;
+      padding: 0 16px 0 48px;
+      border-radius: 10px;
+      background: var(--input-bg);
+      border: 1px solid #283036;
+      color: #e6eef8;
+      outline: none;
+      transition: all 0.2s ease;
+      font-size: 0.96rem;
+      line-height: 1.5;
+    }
+
+    .field .input::placeholder {
+      color: #6b7280;
+    }
+
+    .field .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 6px 20px rgba(88,166,255,0.08);
+    }
+
+    .field .input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 2px rgba(244,63,94,0.1);
+    }
+
+    /* Buttons */
+    .btn-primary-custom {
+      background: linear-gradient(90deg,var(--accent), #1f6feb);
+      border: none;
+      color: white;
+      border-radius: 999px;
+      padding: 12px 24px;
+      font-weight:700;
+      box-shadow: 0 8px 22px rgba(31,107,235,0.12);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+    .btn-primary-custom:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(31,107,235,0.18);
+    }
+    .btn-primary-custom:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-outline-subtle {
+      background: transparent;
+      border: 1px dashed #2b3339;
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    .btn-outline-subtle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Messages */
+    .msg {
+      margin-top:16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size:0.95rem;
+      display: none;
+    }
+    .msg.show { display: block; }
+    .msg.success {
+      background: rgba(33,197,90,0.1);
+      border: 1px solid rgba(33,197,90,0.2);
+      color: var(--success);
+    }
+    .msg.error {
+      background: rgba(244,63,94,0.1);
+      border: 1px solid rgba(244,63,94,0.2);
+      color: var(--error);
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #2b3339;
+      transition: all 0.3s ease;
+    }
+    .step-dot.active {
+      background: var(--accent);
+      transform: scale(1.2);
+    }
+
+    /* Button groups */
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn-group .flex-fill {
+      flex: 1;
+    }
+
+    /* Success icon positioning */
+    .success-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+  </style>
+{% endblock css %}
+{% block nav %}
+  <!-- top bar -->
+  <div class="site-navbar">
+    <div class="brand">
+      <i class="fa-solid fa-code-branch"></i>
+      CodeSync AI
+    </div>
+    <a class="nav-action" href="{% url 'setting' %}">
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Settings
+    </a>
+  </div>
+
+  <div class="container-center">
+    <section class="card-panel">
+      <div class="card-title">
+        <span class="badge bg-dark" style="border-radius:10px;border:1px solid #2b2f33">
+          <i class="fa-solid fa-lock" style="color:#ffcc80"></i>
+        </span>
+        <div>Change Password</div>
+      </div>
+      <div class="card-sub">Securely update your password with OTP verification.</div>
+{% endblock nav %}
+{% block content %}
+             <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+      </div>
+
+      <form id="passwordForm">
+        <!-- Step 1: Current Password + Email/ID -->
+        <div class="step active" data-step="1">
+          <div class="field">
+            <label for="email">Enter your email or ID</label>
+            <div class="input-wrapper">
+              <span class="field-icon"><i class="fa-solid fa-user"></i></span>
+              <input id="email" class="input" type="email" required placeholder="Email or ID" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="currentPassword">Current password</label>
+            <div class="input-wrapper">
+              <span class="field-icon"><i class="fa-solid fa-key"></i></span>
+              <input id="currentPassword" class="input" type="password" required placeholder="Enter current password" />
+            </div>
+          </div>
+          <button type="button" class="btn-primary-custom" onclick="goToStep(2)">
+            Proceed to OTP Verification
+          </button>
+        </div>
+
+        <!-- Step 2: OTP Verification -->
+        <div class="step" data-step="2">
+          <div class="field">
+            <label for="otpInput">One-time code (OTP)</label>
+            <div class="input-wrapper">
+              <span class="field-icon"><i class="fa-solid fa-message"></i></span>
+              <input id="otpInput" class="input" type="text" required maxlength="6"
+                     pattern="[0-9]{6}" placeholder="Enter 6-digit code" />
+            </div>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn-primary-custom flex-fill" onclick="goToStep(3)">
+              Verify OTP
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: New Password -->
+        <div class="step" data-step="3">
+          <div class="field">
+            <label for="newPassword">New password</label>
+            <div class="input-wrapper">
+              <span class="field-icon"><i class="fa-solid fa-lock-open"></i></span>
+              <input id="newPassword" class="input" type="password" required
+                     minlength="8" placeholder="New password (min 8 chars)" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm password</label>
+            <div class="input-wrapper">
+              <span class="field-icon"><i class="fa-solid fa-check"></i></span>
+              <input id="confirmPassword" class="input" type="password" required
+                     placeholder="Re-type new password" />
+            </div>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn-primary-custom flex-fill" onclick="updatePassword()">
+              Update Password
+            </button>
+            <button type="button" class="btn-outline-subtle" onclick="goToStep(1)">
+              Start Over
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="message" class="msg"></div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #22272b; padding:16px 20px; text-align:center; color: #9da7b3;">
+    © 2025 CodeSync AI. Secure & Reliable Collaboration.
+  </footer>
+{% endblock content %}
+{% block js %}
+ <script>
+    let currentStep = 1;
+
+    function showMessage(text, type = 'error') {
+      const msg = document.getElementById('message');
+      if (type === 'success' && text.includes('successfully')) {
+        msg.innerHTML = `<span class="success-icon"><i class="fa-solid fa-circle-check"></i>${text}</span>`;
+      } else {
+        msg.textContent = text;
+      }
+      msg.className = `msg ${type} show`;
+      setTimeout(() => msg.classList.remove('show'), 5000);
+    }
+
+    function goToStep(step) {
+      // Hide all steps
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+
+      // Show target step
+      document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+      // Update step indicators
+      for(let i = 1; i <= step; i++) {
+        document.querySelector(`.step-dot[data-step="${i}"]`).classList.add('active');
+      }
+
+      currentStep = step;
+
+      // Focus first input in new step
+      setTimeout(() => {
+        const firstInput = document.querySelector(`.step[data-step="${step}"] input`);
+        if(firstInput) firstInput.focus();
+      }, 100);
+    }
+
+    function updatePassword() {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Clear previous errors
+      document.querySelectorAll('.input').forEach(input => input.classList.remove('error'));
+
+      if (newPassword.length < 8) {
+        showMessage('New password must be at least 8 characters');
+        document.getElementById('newPassword').classList.add('error');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showMessage('Passwords do not match');
+        document.getElementById('confirmPassword').classList.add('error');
+        return;
+      }
+
+      // Success
+      showMessage('Password updated successfully!', 'success');
+
+      // Disable form after success
+      document.querySelectorAll('button, input').forEach(el => el.disabled = true);
+    }
+
+    // Enhanced keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+
+        if (currentStep === 1) goToStep(2);
+        else if (currentStep === 2) goToStep(3);
+        else if (currentStep === 3) updatePassword();
+      }
+    });
+
+    // Auto-clear error styling on input
+    document.querySelectorAll('.input').forEach(input => {
+      input.addEventListener('input', () => input.classList.remove('error'));
+    });
+
+    // Auto-format OTP input (numbers only)
+    document.getElementById('otpInput').addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+  </script>
+{% endblock js %}

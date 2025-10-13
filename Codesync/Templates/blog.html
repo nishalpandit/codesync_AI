@@ -1,0 +1,734 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - Blog {% endblock title %}
+{% block css %}
+ <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --accent-hover: #388bfd;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .blog-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .blog-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px rgba(88, 166, 255, 0.12);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .blog-card:hover .blog-image {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(88, 166, 255, 0.1) 100%);
+        }
+
+        .blog-card:hover .blog-image i {
+            transform: scale(1.2) rotate(10deg);
+            color: var(--accent);
+        }
+
+        .featured-post:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 30px rgba(88, 166, 255, 0.1);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.02) 100%);
+        }
+
+        .popular-post:hover {
+            transform: translateX(8px);
+            background-color: rgba(88, 166, 255, 0.05);
+        }
+
+        .popular-post:hover .popular-post-image {
+            background: linear-gradient(135deg, var(--accent) 0%, #388bfd 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .blog-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 3rem;
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-category {
+            background-color: var(--bg-tertiary);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .blog-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .blog-title a:hover {
+            color: var(--accent);
+        }
+
+        .blog-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .blog-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .featured-post {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .featured-badge {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .featured-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .popular-post {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .popular-post:last-child {
+            border-bottom: none;
+        }
+
+        .popular-post-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .popular-post-content h6 {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .popular-post-content h6 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .popular-post-content h6 a:hover {
+            color: var(--accent);
+        }
+
+        .popular-post-content small {
+            color: var(--text-secondary);
+        }
+
+        .newsletter-signup {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .form-control {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .page-link {
+            background-color: var(--bg-secondary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+
+        .page-link:hover {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .featured-title {
+                font-size: 1.5rem;
+            }
+
+            .filter-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sidebar {
+                margin-top: 2rem;
+                position: static;
+            }
+        }
+    </style>
+{% endblock css %}
+
+{% block nav %}
+   <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="{% url 'index' %}">
+                <i class="fas fa-code-branch me-2"></i>CodeSync AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'features' %}">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'blog' %}">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endblock nav %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">CodeSync AI Blog</h1>
+            <p class="hero-subtitle">
+                Insights, tutorials, and updates from the world of collaborative coding and AI-powered development
+            </p>
+        </div>
+    </section>
+
+    <!-- Featured Post -->
+    <section class="blog-section">
+        <div class="container">
+            <div class="featured-post">
+                <span class="featured-badge">
+                    <i class="fas fa-star me-2"></i>Featured Post
+                </span>
+                <h2 class="featured-title">
+                    <a href="#" style="color: inherit; text-decoration: none;">The Future of AI-Powered Code Collaboration: What's Next?</a>
+                </h2>
+                <p class="blog-excerpt" style="font-size: 1.1rem;">
+                    Explore how artificial intelligence is revolutionizing the way developers work together, from intelligent code suggestions to automated code reviews. We dive deep into emerging trends and what they mean for the future of software development.
+                </p>
+                <div class="blog-meta">
+                    <div class="author-avatar">AS</div>
+                    <span>Alex Smith</span>
+                    <span>•</span>
+                    <span>March 15, 2024</span>
+                    <span>•</span>
+                    <span>8 min read</span>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all">All Posts</button>
+                <button class="filter-btn" data-filter="ai">AI & Machine Learning</button>
+                <button class="filter-btn" data-filter="collaboration">Collaboration</button>
+                <button class="filter-btn" data-filter="tutorials">Tutorials</button>
+                <button class="filter-btn" data-filter="product">Product Updates</button>
+                <button class="filter-btn" data-filter="engineering">Engineering</button>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="row g-4">
+                        <!-- Blog Post 1 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="ai">
+                                <div class="blog-image">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">AI & Machine Learning</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">Building Better Code with GPT-4: A Developer's Guide</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        Learn how to effectively use GPT-4 for code generation, debugging, and optimization in your daily development workflow.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">SC</div>
+                                        <span>Sarah Chen</span>
+                                        <span>•</span>
+                                        <span>September 30 , 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog Post 2 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="collaboration">
+                                <div class="blog-image">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">Collaboration</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">Real-time Collaboration Best Practices</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        Master the art of collaborative coding with these proven strategies for effective real-time development.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">MJ</div>
+                                        <span>Michael Johnson</span>
+                                        <span>•</span>
+                                        <span>March 10, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog Post 3 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="tutorials">
+                                <div class="blog-image">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">Tutorials</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">Getting Started with CodeSync AI: Complete Tutorial</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        A comprehensive guide to setting up your first collaborative coding project with CodeSync AI.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">JD</div>
+                                        <span>John Doe</span>
+                                        <span>•</span>
+                                        <span>March 8, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog Post 4 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="product">
+                                <div class="blog-image">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">Product Updates</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">New Features: Enhanced AI Suggestions & Security Updates</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        Discover the latest improvements to our AI engine and new enterprise-grade security features.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">EM</div>
+                                        <span>Emma Martinez</span>
+                                        <span>•</span>
+                                        <span>March 5, 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog Post 5 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="engineering">
+                                <div class="blog-image">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">Engineering</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">Scaling Real-time Collaboration: Architecture Deep Dive</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        How we built a system that handles millions of concurrent collaborative editing sessions.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">RK</div>
+                                        <span>Ryan Kim</span>
+                                        <span>•</span>
+                                        <span>March 3, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog Post 6 -->
+                        <div class="col-md-6">
+                            <div class="blog-card" data-category="ai">
+                                <div class="blog-image">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="blog-content">
+                                    <span class="blog-category">AI & Machine Learning</span>
+                                    <h3 class="blog-title">
+                                        <a href="#">Training Custom AI Models for Code Review</a>
+                                    </h3>
+                                    <p class="blog-excerpt">
+                                        Learn how to train and deploy custom AI models specifically for your team's code review process.
+                                    </p>
+                                    <div class="blog-meta">
+                                        <div class="author-avatar">LT</div>
+                                        <span>Lisa Thompson</span>
+                                        <span>•</span>
+                                        <span>March 1, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Blog pagination">
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        <h4 class="sidebar-title">Popular Posts</h4>
+
+                        <div class="popular-post">
+                            <div class="popular-post-image">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="popular-post-content">
+                                <h6><a href="#">10 VS Code Extensions Every Developer Needs</a></h6>
+                                <small>February 28, 2024 • 1.2k views</small>
+                            </div>
+                        </div>
+
+                        <div class="popular-post">
+                            <div class="popular-post-image">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="popular-post-content">
+                                <h6><a href="#">Boosting Team Productivity with AI Pair Programming</a></h6>
+                                <small>February 25, 2024 • 980 views</small>
+                            </div>
+                        </div>
+
+                        <div class="popular-post">
+                            <div class="popular-post-image">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="popular-post-content">
+                                <h6><a href="#">Security Best Practices for Remote Development Teams</a></h6>
+                                <small>February 22, 2024 • 756 views</small>
+                            </div>
+                        </div>
+
+                        <div class="popular-post">
+                            <div class="popular-post-image">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="popular-post-content">
+                                <h6><a href="#">Mobile-First Code Review: Tips and Tricks</a></h6>
+                                <small>February 20, 2024 • 642 views</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Signup -->
+                    <div class="newsletter-signup">
+                        <h4 class="sidebar-title">Stay Updated</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Get the latest insights and tutorials delivered to your inbox.
+                        </p>
+                        <form>
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Subscribe
+                            </button>
+                        </form>
+                        <small style="color: var(--text-secondary); display: block; margin-top: 1rem;">
+                            No spam, unsubscribe anytime.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Filter functionality
+            $('.filter-btn').click(function() {
+                const filter = $(this).data('filter');
+
+                // Update active button
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                // Show/hide blog cards
+                if (filter === 'all') {
+                    $('.blog-card').fadeIn();
+                } else {
+                    $('.blog-card').hide();
+                    $('[data-category="' + filter + '"]').fadeIn();
+                }
+            });
+
+            // Newsletter subscription
+            $('form').submit(function(e) {
+                e.preventDefault();
+                const email = $(this).find('input[type="email"]').val();
+                if (email) {
+                    alert('Thank you for subscribing! You will receive our latest updates.');
+                    $(this).find('input[type="email"]').val('');
+                }
+            });
+
+            // Smooth scrolling
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if(target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+
+            // Blog card click handler
+            $('.blog-card').click(function() {
+                const title = $(this).find('.blog-title a').text();
+                alert('This would open the full blog post: "' + title + '"');
+            });
+
+            // Popular post click handler
+            $('.popular-post').click(function() {
+                const title = $(this).find('h6 a').text();
+                alert('This would open the popular post: "' + title + '"');
+            });
+        });
+    </script>
+{% endblock js %}

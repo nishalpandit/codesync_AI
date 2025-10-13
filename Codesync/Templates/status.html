@@ -1,0 +1,576 @@
+{% extends 'base.html' %}
+{% block title %} CodeSync AI - System Status {% endblock title %}
+{% block css %}
+   <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #58a6ff;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+            --border: #30363d;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-dark {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-operational { background-color: var(--success); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .services-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .service-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(88, 166, 255, 0.03) 100%);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .service-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .service-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .operational {
+            background-color: rgba(35, 134, 54, 0.2);
+            color: var(--success);
+        }
+
+        .uptime-section {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .uptime-chart {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .uptime-chart:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.1);
+        }
+
+        .uptime-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .uptime-day {
+            flex: 1;
+            margin-right: 2px;
+            background-color: var(--success);
+            transition: all 0.3s ease;
+        }
+
+        .uptime-day:hover {
+            opacity: 0.8;
+            transform: scaleY(1.1);
+        }
+
+        .uptime-day.incident {
+            background-color: var(--danger);
+        }
+
+        .uptime-day.degraded {
+            background-color: var(--warning);
+        }
+
+        .incidents-section {
+            padding: 80px 0;
+            background-color: var(--bg-primary);
+        }
+
+        .incident-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .incident-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--warning);
+            box-shadow: 0 8px 20px rgba(210, 153, 34, 0.1);
+        }
+
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .incident-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .incident-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .incident-severity {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .severity-minor {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: var(--warning);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(88, 166, 255, 0.15);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .subscribe-section {
+            padding: 60px 0;
+            background-color: var(--bg-secondary);
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #388bfd;
+            border-color: #388bfd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 166, 255, 0.3);
+        }
+    </style>
+{% endblock css %}
+{% block nav %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fas fa-code-branch me-2"></i>
+                <span>CodeSync AI</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'help_center' %}">
+                            <span>Help</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#status">
+                            <span>Status</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'auth' %}">
+                            <span>Login</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+{% block content %}
+   <!-- Hero Section -->
+    <section class="hero-section" style="margin-top: 76px;">
+        <div class="container">
+            <h1 class="hero-title">
+                <span>System Status</span>
+            </h1>
+            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                <span>Current status of CodeSync AI services and infrastructure</span>
+            </p>
+            <div class="status-indicator">
+                <div class="status-dot status-operational"></div>
+                <span style="color: var(--success);">All Systems Operational</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Metrics -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span>Performance Metrics</span>
+            </h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-value">99.98%</span>
+                    <div class="metric-label">
+                        <span>Uptime (30 days)</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value">45ms</span>
+                    <div class="metric-label">
+                        <span>Average Response Time</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value">2.1M</span>
+                    <div class="metric-label">
+                        <span>Requests Today</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value">0</span>
+                    <div class="metric-label">
+                        <span>Active Incidents</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Status -->
+    <section class="services-section" style="padding-top: 0;">
+        <div class="container">
+            <h2 class="section-title">
+                <span>Service Status</span>
+            </h2>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-globe me-2"></i>
+                        <span>Web Application</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>Main web interface and dashboard</span>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-robot me-2"></i>
+                        <span>AI Services</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>Code suggestions, completion, and analysis</span>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-users me-2"></i>
+                        <span>Real-time Collaboration</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>Live editing, cursors, and synchronization</span>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-code-branch me-2"></i>
+                        <span>Git Integration</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>GitHub, GitLab, and version control features</span>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-database me-2"></i>
+                        <span>API Services</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>REST API and webhooks</span>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-name">
+                        <i class="fas fa-bell me-2"></i>
+                        <span>Notifications</span>
+                    </div>
+                    <span class="service-status operational">Operational</span>
+                </div>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    <span>Email, push, and in-app notifications</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Uptime History -->
+    <section class="uptime-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span>30-Day Uptime History</span>
+            </h2>
+            <div class="uptime-chart">
+                <div class="uptime-bar" id="uptimeBar">
+                    <!-- Days will be generated by JavaScript -->
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 0.8rem;">
+                    <span>30 days ago</span>
+                    <span>Today</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Incidents -->
+    <section class="incidents-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span>Recent Incidents</span>
+            </h2>
+
+            <div class="incident-card">
+                <div class="incident-header">
+                    <div>
+                        <h4 class="incident-title">
+                            <span>Resolved: Temporary AI Service Slowdown</span>
+                        </h4>
+                        <div class="incident-time">
+                            <span>March 10, 2024 • 2:15 PM - 2:45 PM PST</span>
+                        </div>
+                    </div>
+                    <span class="incident-severity severity-minor">Minor</span>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    <span>AI code suggestions experienced increased response times. The issue was resolved by scaling up processing capacity. No data was lost.</span>
+                </p>
+            </div>
+
+            <div class="incident-card">
+                <div class="incident-header">
+                    <div>
+                        <h4 class="incident-title">
+                            <span>Resolved: GitHub Integration Intermittent Issues</span>
+                        </h4>
+                        <div class="incident-time">
+                            <span>March 5, 2024 • 9:00 AM - 10:30 AM PST</span>
+                        </div>
+                    </div>
+                    <span class="incident-severity severity-minor">Minor</span>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    <span>Some users experienced difficulties connecting to GitHub repositories. The issue was caused by rate limiting and has been resolved.</span>
+                </p>
+            </div>
+
+            <div class="text-center mt-4">
+                <p style="color: var(--text-secondary);">
+                    <span>No major incidents in the last 30 days</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscribe Section -->
+    <section class="subscribe-section">
+        <div class="container">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">
+                <span>Stay Updated</span>
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                <span>Subscribe to get notified about status updates and incidents</span>
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="email" class="form-control" style="background-color: var(--bg-primary); border-color: var(--border); color: var(--text-primary);" placeholder="Enter your email">
+                        <button class="btn btn-primary" type="button">
+                            <span>Subscribe</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block js %}
+   <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Generate uptime bars
+            const uptimeBar = document.getElementById('uptimeBar');
+            for (let i = 0; i < 30; i++) {
+                const day = document.createElement('div');
+                day.className = 'uptime-day';
+
+                if (Math.random() < 0.02) {
+                    day.className += ' incident';
+                } else if (Math.random() < 0.05) {
+                    day.className += ' degraded';
+                }
+
+                day.title = `Day ${30 - i}: ${Math.random() < 0.07 ? 'Issues detected' : '100% uptime'}`;
+                uptimeBar.appendChild(day);
+            }
+
+            // Subscribe functionality
+            $('.btn-primary').click(function() {
+                const email = $(this).siblings('input[type="email"]').val();
+                if (email) {
+                    alert('Thank you for subscribing to status updates!');
+                    $(this).siblings('input[type="email"]').val('');
+                }
+            });
+        });
+    </script>
+{% endblock js %}
