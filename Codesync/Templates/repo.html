@@ -1,609 +1,1241 @@
 {% extends 'base.html' %}
-{% block title %} CodeSync AI - ai-chatbot Repository {% endblock title %}
+{% block title %} CodeSync AI - Code Editor {% endblock title %}
+
 {% block css %}
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #7d8590;
-            --accent: #58a6ff;
-            --accent-hover: #388bfd;
-            --border: #30363d;
-            --success: #238636;
-            --warning: #f85149;
-        }
+<style>
+    /* ---------- Theme variables ---------- */
+    :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --text-primary: #f0f6fc;
+        --text-secondary: #7d8590;
+        --accent: #58a6ff;
+        --accent-hover: #388bfd;
+        --border: #30363d;
+        --success: #238636;
+        --warning: #f85149;
+        --scrollbar-bg: #161b22;
+        --scrollbar-thumb: #30363d;
+        --scrollbar-thumb-hover: #484f58;
+    }
 
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .top-navbar {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    html,
+    body {
+        height: 100%;
+    }
 
-        .navbar-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        overflow: hidden;
+    }
 
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    body.light-mode {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f6f8fa;
+        --bg-tertiary: #eaeef2;
+        --text-primary: #24292f;
+        --text-secondary: #57606a;
+        --border: #d0d7de;
+        --scrollbar-bg: #f6f8fa;
+        --scrollbar-thumb: #d0d7de;
+        --scrollbar-thumb-hover: #afb8c1;
+    }
 
-        .back-btn {
-            color: var(--text-secondary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s ease;
-        }
+    /* ---------- Custom Scrollbar ---------- */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
 
-        .back-btn:hover {
-            color: var(--accent);
-        }
+    ::-webkit-scrollbar-track {
+        background: var(--scrollbar-bg);
+    }
 
-        .repo-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+    ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 5px;
+    }
 
-        .repo-privacy {
-            background-color: var(--bg-tertiary);
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--scrollbar-thumb-hover);
+    }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    /* ---------- Top navbar ---------- */
+    .top-navbar {
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem 1.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
 
-        .online-users {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
+    .navbar-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
 
-        .online-indicator {
-            width: 8px;
-            height: 8px;
-            background-color: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+    .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+    .back-btn {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
+    .back-btn:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: var(--accent);
+    }
 
-        .btn-primary, .btn-secondary, .btn-success {
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+    .repo-privacy {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        font-size: 0.7rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
 
-        .btn-primary {
-            background-color: var(--accent);
-            border-color: var(--accent);
-        }
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
 
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-        }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
 
-        .btn-secondary {
-            background-color: var(--bg-tertiary);
-            border-color: var(--border);
-            color: var(--text-primary);
-        }
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
 
-        .btn-secondary:hover {
-            background-color: var(--bg-primary);
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
+    .btn-primary {
+        background: var(--accent);
+        color: white;
+    }
 
-        .btn-success {
-            background-color: var(--success);
-            border-color: var(--success);
-        }
+    .btn-primary:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(88, 166, 255, 0.3);
+    }
 
-        .main-container {
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
 
+    .btn-success:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(35, 134, 54, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: var(--accent);
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    /* ---------- Main layout ---------- */
+    .main-container {
+        display: flex;
+        height: calc(100vh - 60px);
+    }
+
+    /* ---------- File Explorer ---------- */
+    .file-explorer {
+        width: 280px;
+        background-color: var(--bg-secondary);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transition: width 0.3s ease;
+    }
+
+    .file-explorer-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .file-explorer-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .search-box {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.6rem 0.8rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    .file-tree {
+        padding: 0.5rem 0;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.7rem 1rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        transition: all 0.15s;
+        border-left: 3px solid transparent;
+    }
+
+    .file-item:hover {
+        background: var(--bg-tertiary);
+        border-left-color: var(--accent);
+    }
+
+    .file-item.active {
+        background: rgba(88, 166, 255, 0.1);
+        color: var(--accent);
+        border-left-color: var(--accent);
+    }
+
+    .file-item-left {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .file-icon {
+        font-size: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .file-item.active .file-icon {
+        color: var(--accent);
+    }
+
+    .file-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500;
+    }
+
+    .delete-btn {
+        opacity: 0;
+        transition: opacity 0.2s;
+        color: var(--warning);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.3rem;
+        border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+        background: rgba(248, 81, 73, 0.1);
+    }
+
+    .file-item:hover .delete-btn {
+        opacity: 1;
+    }
+
+    /* ---------- Editor panel ---------- */
+    .editor-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-primary);
+    }
+
+    .editor-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .file-path {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--text-secondary);
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.9rem;
+    }
+
+    .file-path-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    #currentFilePath {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    #currentFileMeta {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .editor-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .editor-btn {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 0.45rem 0.75rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .editor-btn:hover:not(:disabled) {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: var(--accent);
+        transform: translateY(-1px);
+    }
+
+    .editor-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .save-indicator {
+        font-size: 0.8rem;
+        color: var(--success);
+        display: none;
+        align-items: center;
+        gap: 0.3rem;
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Ace editor container */
+    #aceEditor {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* ---------- Modal styles ---------- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        z-index: 1200;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.3s;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    .required {
+        color: var(--warning);
+    }
+
+    .file-type-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    .file-type-select {
+        padding: 0.75rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        cursor: pointer;
+        min-width: 150px;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 0.4rem;
+    }
+
+    .error-message {
+        color: var(--warning);
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
+        display: none;
+    }
+
+    .privacy-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .privacy-option {
+        padding: 1rem;
+        background: var(--bg-tertiary);
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .privacy-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .privacy-option:hover {
+        border-color: var(--accent);
+        background: rgba(88, 166, 255, 0.05);
+    }
+
+    .privacy-option.selected {
+        border-color: var(--accent);
+        background: rgba(88, 166, 255, 0.1);
+    }
+
+    .privacy-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .privacy-icon {
+        font-size: 1.1rem;
+        color: var(--accent);
+    }
+
+    .privacy-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .modal-footer {
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background: var(--bg-primary);
+    }
+
+    .btn-cancel {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+    }
+
+    .btn-cancel:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    /* Toast */
+    #toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        display: none;
+        z-index: 2000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        animation: slideInRight 0.3s;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
         .file-explorer {
-            width: 280px;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            overflow-y: auto;
+            width: 220px;
         }
 
-        .file-explorer-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .action-buttons .btn span {
+            display: none;
         }
 
-        .file-explorer-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin: 0;
+        .privacy-options {
+            grid-template-columns: 1fr;
         }
-
-        .file-tree {
-            padding: 0.5rem 0;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            transition: background-color 0.2s ease;
-        }
-
-        .file-item:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .file-item.active {
-            background-color: rgba(88, 166, 255, 0.1);
-            color: var(--accent);
-        }
-
-        .file-icon {
-            width: 16px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .file-icon.folder {
-            color: #54aeff;
-        }
-
-        .file-icon.js {
-            color: #f1e05a;
-        }
-
-        .file-icon.py {
-            color: #3572A5;
-        }
-
-        .file-icon.md {
-            color: #083fa1;
-        }
-
-        .file-icon.json {
-            color: #f85149;
-        }
-
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-primary);
-        }
-
-        .editor-header {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .file-path {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'SF Mono', 'Monaco', monospace;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .editor-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .editor-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .editor-btn:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .code-editor {
-            flex: 1;
-            background-color: var(--bg-primary);
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            padding: 1rem;
-            border: none;
-            outline: none;
-            color: var(--text-primary);
-            resize: none;
-            overflow-y: auto;
-        }
-
-        .collaboration-panel {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 300px;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-        }
-
-        .collab-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .collab-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        .collab-users {
-            padding: 1rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-        }
-
-        .user-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .user-status {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        .user-cursor {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        @media (max-width: 768px) {
-            .file-explorer {
-                display: none;
-            }
-
-            .main-container {
-                flex-direction: column;
-            }
-
-            .collaboration-panel {
-                display: none;
-            }
-
-            .top-navbar {
-                padding: 1rem;
-            }
-
-            .navbar-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .action-buttons {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
+    }
+</style>
 {% endblock css %}
+
 {% block nav %}
-   <!-- Top Navbar -->
-    <div class="top-navbar">
-        <div class="navbar-content">
-            <div class="navbar-left">
-                <a href="#" class="back-btn">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Dashboard</span>
-                </a>
-                <h1 class="repo-title">
-                    <i class="fas fa-folder"></i>
-                    <span>ai-chatbot</span>
-                    <span class="repo-privacy">Private</span>
-                </h1>
-            </div>
-            <div class="navbar-right">
-                <div class="online-users">
-                    <div class="online-indicator"></div>
-                    <span>3 users online</span>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-success btn-sm" onclick="commitChanges()">
-                        <i class="fas fa-check me-2"></i>
-                        <span>Commit</span>
-                    </button>
-                    <button class="btn btn-primary btn-sm" onclick="showAISuggestions()">
-                        <i class="fas fa-robot me-2"></i>
-                        <span>AI Suggest</span>
-                    </button>
-                    <button class="btn btn-secondary btn-sm" onclick="shareRepo()">
-                        <i class="fas fa-share me-2"></i>
-                        <span>Share</span>
-                    </button>
-                </div>
-            </div>
+<div class="top-navbar">
+    <div class="navbar-content">
+        <div class="navbar-left">
+             <a href="{% url 'dashboard' %}" style="text-decoration: none;" ><button class="back-btn" >
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </button></a>
+            <!-- replace the span showing visibility -->
+            <span class="repo-privacy" id="repoPrivacy">{% if repo_visiblity == 'public' %}Public{% else %}Private{% endif %}</span>
         </div>
-    </div>
-{% endblock nav %}
-{% block content %}
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- File Explorer -->
-        <div class="file-explorer">
-            <div class="file-explorer-header">
-                <h3 class="file-explorer-title">Project Files</h3>
-                <button class="btn btn-sm" style="background: none; border: none; color: var(--text-secondary);">
+        <div class="navbar-right">
+            <div class="action-buttons">
+                <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="btn btn-success btn-sm" onclick="saveCurrentRepo()">
+                    <i class="fas fa-save"></i>
+                    <span>Save & Commit</span>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
                     <i class="fas fa-plus"></i>
+                    <span>New File</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="showAISuggestions()">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Suggest</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
                 </button>
             </div>
-            <div class="file-tree">
-                <div class="file-item" onclick="selectFile('src')">
-                    <i class="fas fa-folder file-icon folder"></i>
-                    <span>src</span>
-                </div>
-                <div class="file-item" onclick="selectFile('main.py')" style="padding-left: 2rem;">
-                    <i class="fas fa-file file-icon py"></i>
-                    <span>main.py</span>
-                </div>
-                <div class="file-item active" onclick="selectFile('chatbot.py')" style="padding-left: 2rem;">
-                    <i class="fas fa-file file-icon py"></i>
-                    <span>chatbot.py</span>
-                </div>
-                <div class="file-item" onclick="selectFile('utils.py')" style="padding-left: 2rem;">
-                    <i class="fas fa-file file-icon py"></i>
-                    <span>utils.py</span>
-                </div>
-                <div class="file-item" onclick="selectFile('config')">
-                    <i class="fas fa-folder file-icon folder"></i>
-                    <span>config</span>
-                </div>
-                <div class="file-item" onclick="selectFile('config.json')" style="padding-left: 2rem;">
-                    <i class="fas fa-file file-icon json"></i>
-                    <span>config.json</span>
-                </div>
-                <div class="file-item" onclick="selectFile('requirements.txt')">
+            <div class="d-flex" id="avatarContainer"></div>
+        </div>
+    </div>
+</div>
+{% endblock nav %}
+
+{% block content %}
+<form id="hiddenCsrfForm" style="display:none;">{% csrf_token %}</form>
+
+<div class="main-container">
+    <!-- File Explorer -->
+    <div class="file-explorer" id="fileExplorer">
+        <div class="file-explorer-header">
+            <h3 class="file-explorer-title">Explorer</h3>
+            <span id="repoCount" style="color:var(--text-secondary); font-size:0.85rem;">
+                {{ repos|length }} files
+            </span>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search files...">
+        </div>
+
+        <div class="file-tree" id="fileTree">
+            {% for repo in repos %}
+            <div class="file-item" id="repo-{{ repo.id }}" data-id="{{ repo.id }}" onclick="selectFile({{ repo.id }})">
+                <div class="file-item-left">
                     <i class="fas fa-file file-icon"></i>
-                    <span>requirements.txt</span>
+                    <div style="min-width:0; flex:1;">
+                        <div class="file-name" title="{{ repo.repo_name }}">{{ repo.repo_name }}</div>
+                    </div>
                 </div>
-                <div class="file-item" onclick="selectFile('README.md')">
-                    <i class="fas fa-file file-icon md"></i>
-                    <span>README.md</span>
-                </div>
+                <button class="delete-btn" onclick="event.stopPropagation(); deleteRepo({{ repo.id }})" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
-        </div>
-
-        <!-- Editor Container -->
-        <div class="editor-container">
-            <div class="editor-header">
-                <div class="file-path">
-                    <i class="fas fa-file file-icon py"></i>
-                    <span>src / chatbot.py</span>
-                </div>
-                <div class="editor-actions">
-                    <button class="editor-btn" onclick="formatCode()">
-                        <i class="fas fa-indent me-1"></i>
-                        <span>Format</span>
-                    </button>
-                    <button class="editor-btn" onclick="saveFile()">
-                        <i class="fas fa-save me-1"></i>
-                        <span>Save</span>
-                    </button>
-                </div>
+            {% empty %}
+            <div style="padding:1.5rem; color:var(--text-secondary); text-align:center;">
+                <i class="fas fa-folder-open" style="font-size:2rem; margin-bottom:0.5rem; opacity:0.5;"></i>
+                <p>No files yet</p>
+                <p style="font-size:0.8rem;">Create one with the New button</p>
             </div>
-
-            <textarea class="code-editor" id="codeEditor" placeholder="Loading file content...">import tensorflow as tf
-import numpy as np
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
-import json
-import logging
-
-class AIChat:
-    def __init__(self, model_name='gpt2'):
-        self.tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-        self.model = GPT2LMHeadModel.from_pretrained(model_name)
-        self.conversation_history = []
-
-    def generate_response(self, user_input):
-        # Add user input to conversation history
-        self.conversation_history.append(user_input)
-
-        # Encode the input
-        input_ids = self.tokenizer.encode(user_input, return_tensors='pt')
-
-        # Generate response
-        output = self.model.generate(
-            input_ids,
-            max_length=150,
-            num_return_sequences=1,
-            temperature=0.7
-        )
-
-        # Decode and return
-        response = self.tokenizer.decode(output[0], skip_special_tokens=True)
-        self.conversation_history.append(response)
-
-        return response
-
-    def clear_history(self):
-        self.conversation_history = []</textarea>
+            {% endfor %}
         </div>
     </div>
 
-    <!-- Collaboration Panel -->
-    <div class="collaboration-panel">
-        <div class="collab-header">
-            <h4 class="collab-title">Active Users</h4>
-            <span style="color: var(--text-secondary); font-size: 0.8rem;">3 online</span>
-        </div>
-        <div class="collab-users">
-            <div class="user-item">
-                <div class="user-avatar" style="background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);">
-                    NP
+    <!-- Editor -->
+    <div class="editor-container">
+        <div class="editor-header">
+            <div class="file-path">
+                <i class="fas fa-file file-icon" id="currentFileIcon"></i>
+                <div class="file-path-info">
+                    <div id="currentFilePath">Select a file to edit</div>
+                    <div id="currentFileMeta">—</div>
                 </div>
-                <div class="user-info">
-                    <p class="user-name">Nihal Pandit (You)</p>
-                    <p class="user-status">Editing chatbot.py</p>
-                </div>
-                <div class="user-cursor" style="background-color: #58a6ff;"></div>
             </div>
-
-            <div class="user-item">
-                <div class="user-avatar" style="background: linear-gradient(135deg, #34d399 0%, #059669 100%);">
-                    JD
-                </div>
-                <div class="user-info">
-                    <p class="user-name">Nihal Pandit</p>
-                    <p class="user-status">Viewing main.py</p>
-                </div>
-                <div class="user-cursor" style="background-color: #34d399;"></div>
-            </div>
-
-            <div class="user-item">
-                <div class="user-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                    SM
-                </div>
-                <div class="user-info">
-                    <p class="user-name">Tanishq Kumar</p>
-                    <p class="user-status">Editing utils.py</p>
-                </div>
-                <div class="user-cursor" style="background-color: #f59e0b;"></div>
+            <div class="editor-actions">
+                <span class="save-indicator" id="saveIndicator">
+                    <i class="fas fa-check"></i> Saved
+                </span>
+                <button class="editor-btn" onclick="formatCode()">
+                    <i class="fas fa-indent"></i> Format
+                </button>
             </div>
         </div>
+
+        <div id="aceEditor"></div>
     </div>
+</div>
+
+<!-- Create Repo Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-folder-plus"></i>
+                Create New File
+            </h2>
+            <button class="modal-close" onclick="closeCreateModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="createForm" onsubmit="handleCreate(event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">File Name <span class="required">*</span></label>
+                    <div class="file-type-group">
+                        <input id="newFileName" class="form-input" placeholder="e.g., main, index, app" required style="flex:1;" />
+                        <select id="newFileType" class="file-type-select">
+                            <option value=".js">JavaScript (.js)</option>
+                            <option value=".py">Python (.py)</option>
+                            <option value=".html">HTML (.html)</option>
+                            <option value=".css">CSS (.css)</option>
+                            <option value=".json">JSON (.json)</option>
+                            <option value=".md">Markdown (.md)</option>
+                            <option value=".txt">Text (.txt)</option>
+                            <option value=".jsx">React (.jsx)</option>
+                            <option value=".ts">TypeScript (.ts)</option>
+                            <option value=".php">PHP (.php)</option>
+                            <option value=".java">Java (.java)</option>
+                            <option value=".cpp">C++ (.cpp)</option>
+                            <option value=".c">C (.c)</option>
+                            <option value=".sql">SQL (.sql)</option>
+                        </select>
+                    </div>
+                    <div class="form-hint">Choose a descriptive name for your file</div>
+                    <div id="createFileNameError" class="error-message">File name is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description (min 20 words) <span class="required">*</span></label>
+                    <textarea id="newDescription" class="form-input" rows="4" placeholder="Describe what this file does and its purpose..."></textarea>
+                    <div class="form-hint">Words: <span id="newDescWordCount">0</span> / 20 minimum</div>
+                    <div id="createDescriptionError" class="error-message">Description must be at least 20 words</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Privacy</label>
+                    <div class="privacy-options">
+                        <label class="privacy-option selected" id="publicOption">
+                            <input type="radio" name="privacy" value="public" checked onchange="selectPrivacy('public')">
+                            <div class="privacy-header">
+                                <i class="fas fa-globe privacy-icon"></i>
+                                Public
+                            </div>
+                            <div class="privacy-description">Anyone can see this file</div>
+                        </label>
+                        <label class="privacy-option" id="privateOption">
+                            <input type="radio" name="privacy" value="private" onchange="selectPrivacy('private')">
+                            <div class="privacy-header">
+                                <i class="fas fa-lock privacy-icon"></i>
+                                Private
+                            </div>
+                            <div class="privacy-description">Only you and collaborators</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeCreateModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="createBtn">
+                    <i class="fas fa-plus"></i> Create File
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast"></div>
 {% endblock content %}
+
 {% block js %}
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        function selectFile(filename) {
-            $('.file-item').removeClass('active');
-            event.target.closest('.file-item').classList.add('active');
-            console.log('Selected file:', filename);
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ext-language_tools.js"></script>
 
-        function formatCode() {
-            alert('Code formatting would be applied here');
-        }
+<script>
+    const csrftoken = document.querySelector('#hiddenCsrfForm input[name="csrfmiddlewaretoken"]')?.value || null;
 
-        function saveFile() {
-            alert('File saved successfully!');
-        }
+    function toast(msg, timeout = 3000) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.style.display = 'none', timeout);
+    }
 
-        function commitChanges() {
-            alert('Commit changes dialog would open here');
-        }
+    const EXT_TO_MODE = {
+        'js': 'ace/mode/javascript', 'javascript': 'ace/mode/javascript',
+        'py': 'ace/mode/python', 'python': 'ace/mode/python',
+        'html': 'ace/mode/html', 'htm': 'ace/mode/html',
+        'css': 'ace/mode/css', 'json': 'ace/mode/json', 'md': 'ace/mode/markdown',
+        'txt': 'ace/mode/text', 'jsx': 'ace/mode/javascript', 'ts': 'ace/mode/typescript',
+        'php': 'ace/mode/php', 'java': 'ace/mode/java', 'cpp': 'ace/mode/c_cpp', 'c': 'ace/mode/c_cpp',
+        'sql': 'ace/mode/sql'
+    };
 
-        function showAISuggestions() {
-            alert('AI suggestions panel would open here');
-        }
+    function extFromFilename(name) {
+        if (!name) return '';
+        const idx = name.lastIndexOf('.');
+        return idx === -1 ? '' : name.slice(idx + 1).toLowerCase();
+    }
 
-        function shareRepo() {
-            alert('Share repository dialog would open here');
-        }
+    function setEditorModeByExt(nameOrExt) {
+        const ext = nameOrExt.includes('.') ? extFromFilename(nameOrExt) : nameOrExt;
+        const mode = EXT_TO_MODE[ext] || 'ace/mode/text';
+        editor.session.setMode(mode);
+    }
 
-        $(document).ready(function() {
-            // Auto-save functionality
-            let saveTimeout;
-            $('#codeEditor').on('input', function() {
-                clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(function() {
-                    console.log('Auto-saving...');
-                }, 2000);
+    const editor = ace.edit("aceEditor", {
+        useWorker: false,
+        mode: "ace/mode/text",
+        theme: "ace/theme/monokai",
+        selectionStyle: "text",
+        wrap: true
+    });
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        fontSize: "14px"
+    });
+
+    let selectedId = null;
+    let lastSavedContent = "";
+    let currentDescription = "";
+    let autoSaveInterval = null;
+
+    // Word counter for new file description
+    document.getElementById('newDescription').addEventListener('input', (e) => {
+        const words = e.target.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+        document.getElementById('newDescWordCount').textContent = words;
+    });
+
+    async function selectFile(id) {
+        document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+        const node = document.getElementById('repo-' + id);
+        if (node) node.classList.add('active');
+
+        document.getElementById('currentFilePath').textContent = 'Loading...';
+        try {
+            const res = await fetch(`/load_repo/${id}/`);
+            if (!res.ok) throw new Error('Network error');
+            const data = await res.json();
+            if (!data.status) { toast('Error loading file'); return; }
+
+            selectedId = data.data.id;
+            const content = data.data.repo_content || '';
+            currentDescription = data.data.repo_description || '';
+            const filename = data.data.repo_name || '';
+
+            editor.setValue(content, -1);
+            lastSavedContent = editor.getValue();
+
+            document.getElementById('currentFilePath').textContent = filename;
+            document.getElementById('currentFileMeta').textContent = `Last saved: ${new Date().toLocaleString()}`;
+
+            const ext = extFromFilename(filename) || data.data.type || '';
+            setEditorModeByExt(ext);
+
+            // Update visibility label from server response
+            const vis = (data.data.repo_visiblity || '').toLowerCase();
+            document.getElementById('repoPrivacy').textContent = (vis === 'public') ? 'Public' : 'Private';
+
+            document.getElementById('saveIndicator').style.display = 'none';
+            enableAutoSave();
+        } catch (err) {
+            console.error(err);
+            toast('Failed to load file');
+        }
+    }
+
+    async function saveCurrentRepo() {
+        if (!selectedId) { toast('Select a file first'); return; }
+
+        document.getElementById('currentFileMeta').textContent = 'Saving...';
+        try {
+            const form = new FormData();
+            form.append('content', editor.getValue());
+            form.append('description', currentDescription);
+            
+            const currentFilename = document.getElementById('currentFilePath').textContent || '';
+            const ext = extFromFilename(currentFilename);
+            form.append('language_mode', EXT_TO_MODE[ext] || 'ace/mode/text');
+
+            const res = await fetch(`/save_repo/${selectedId}/`, {
+                method: 'POST',
+                headers: csrftoken ? { 'X-CSRFToken': csrftoken } : {},
+                body: form
             });
+            const data = await res.json();
+            if (data.status) {
+                lastSavedContent = editor.getValue();
+                document.getElementById('saveIndicator').style.display = 'inline-flex';
+                setTimeout(() => document.getElementById('saveIndicator').style.display = 'none', 2000);
+                toast('✓ Saved successfully');
+                document.getElementById('currentFileMeta').textContent = `Saved: ${new Date().toLocaleString()}`;
+            } else {
+                toast('⚠ Save failed: ' + (data.message || 'unknown'));
+                document.getElementById('currentFileMeta').textContent = 'Save failed';
+            }
+        } catch (err) {
+            console.error(err);
+            toast('⚠ Save error');
+            document.getElementById('currentFileMeta').textContent = 'Save error';
+        }
+    }
+
+    function enableAutoSave() {
+        clearInterval(autoSaveInterval);
+        autoSaveInterval = setInterval(() => {
+            if (selectedId && editor.getValue() !== lastSavedContent) {
+                saveCurrentRepo();
+            }
+        }, 10000); // Auto-save every 10 seconds
+    }
+
+    async function deleteRepo(id) {
+        if (!confirm('Delete this file? This action cannot be undone.')) return;
+        try {
+            const res = await fetch(`/delete_repo/${id}/`, {
+                method: 'POST',
+                headers: csrftoken ? { 'X-CSRFToken': csrftoken } : {}
+            });
+            const data = await res.json();
+            if (data.status) {
+                toast('✓ File deleted');
+                const node = document.getElementById('repo-' + id);
+                if (node) node.remove();
+                if (selectedId === id) {
+                    editor.setValue('', -1);
+                    selectedId = null;
+                    lastSavedContent = '';
+                    document.getElementById('currentFilePath').textContent = 'Select a file to edit';
+                    document.getElementById('currentFileMeta').textContent = '—';
+                }
+                const count = document.querySelectorAll('.file-item').length;
+                document.getElementById('repoCount').textContent = `${count} files`;
+            } else {
+                toast('⚠ Delete failed');
+            }
+        } catch (err) {
+            console.error(err);
+            toast('⚠ Delete error');
+        }
+    }
+
+    function openCreateModal() {
+        const modal = document.getElementById('createModal');
+        modal.classList.add('show');
+        document.getElementById('newFileName').focus();
+    }
+
+    function closeCreateModal() {
+        const modal = document.getElementById('createModal');
+        modal.classList.remove('show');
+        document.getElementById('createForm').reset();
+        document.getElementById('createFileNameError').style.display = 'none';
+        document.getElementById('createDescriptionError').style.display = 'none';
+        document.getElementById('newDescWordCount').textContent = '0';
+    }
+
+    function selectPrivacy(type) {
+        if (type === 'public') {
+            document.getElementById('publicOption').classList.add('selected');
+            document.getElementById('privateOption').classList.remove('selected');
+        } else {
+            document.getElementById('publicOption').classList.remove('selected');
+            document.getElementById('privateOption').classList.add('selected');
+        }
+    }
+
+    async function handleCreate(e) {
+        e.preventDefault();
+        document.getElementById('createFileNameError').style.display = 'none';
+        document.getElementById('createDescriptionError').style.display = 'none';
+
+        const name = document.getElementById('newFileName').value.trim();
+        const type = document.getElementById('newFileType').value;
+        const description = document.getElementById('newDescription').value.trim();
+        const privacy = document.querySelector('input[name="privacy"]:checked')?.value || 'private';
+
+        if (!name) {
+            document.getElementById('createFileNameError').style.display = 'block';
+            return;
+        }
+        const wordcount = description.split(/\s+/).filter(w => w.length > 0).length;
+        if (wordcount < 20) {
+            document.getElementById('createDescriptionError').style.display = 'block';
+            return;
+        }
+
+        const form = new FormData();
+        form.append('filename', name);
+        form.append('filetype', type);
+        form.append('description', description);
+        form.append('privacy', privacy);
+        const ext = (type || '').replace('.', '');
+        form.append('language_mode', EXT_TO_MODE[ext] || 'ace/mode/text');
+
+        document.getElementById('createBtn').disabled = true;
+        try {
+            const res = await fetch('{% url "create_repo" %}', {
+                method: 'POST',
+                headers: csrftoken ? { 'X-CSRFToken': csrftoken } : {},
+                body: form
+            });
+            const data = await res.json();
+            if (data.status) {
+                toast('✓ File created successfully');
+                setTimeout(() => window.location.reload(), 500);
+            } else {
+                toast('⚠ Create failed: ' + (data.message || 'unknown'));
+                document.getElementById('createBtn').disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            toast('⚠ Create error');
+            document.getElementById('createBtn').disabled = false;
+        }
+    }
+
+    function formatCode() {
+        try {
+            const filename = document.getElementById('currentFilePath').textContent || '';
+            const ext = extFromFilename(filename);
+            if (ext === 'json') {
+                const parsed = JSON.parse(editor.getValue());
+                editor.setValue(JSON.stringify(parsed, null, 2), -1);
+                toast('✓ JSON formatted');
+            } else {
+                const lines = editor.getValue().split('\n').map(l => l.replace(/[ \t]+$/, ''));
+                editor.setValue(lines.join('\n'), -1);
+                toast('✓ Code formatted');
+            }
+        } catch (e) {
+            toast('⚠ Format failed: ' + e.message);
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const icon = document.getElementById('themeIcon');
+        const isLight = document.body.classList.contains('light-mode');
+        icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        editor.setTheme(isLight ? 'ace/theme/chrome' : 'ace/theme/monokai');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
+
+    function openSettings() {
+        const choice = prompt('Settings:\n1. Export Project\n2. Clear Editor\n3. Keyboard Shortcuts\nEnter number:');
+        switch (choice) {
+            case '1':
+                exportProject();
+                break;
+            case '2':
+                if (confirm('Clear editor content? Unsaved changes will be lost.')) {
+                    editor.setValue('', -1);
+                    toast('✓ Editor cleared');
+                }
+                break;
+            case '3':
+                alert('Keyboard Shortcuts:\n\n' +
+                      'Ctrl/Cmd + S: Save file\n' +
+                      'Ctrl/Cmd + B: Toggle theme\n' +
+                      'Ctrl/Cmd + F: Find in file\n' +
+                      'Ctrl/Cmd + H: Find and replace');
+                break;
+        }
+    }
+
+    function exportProject() {
+        const list = Array.from(document.querySelectorAll('.file-item')).map(node => {
+            return { 
+                id: node.dataset.id, 
+                name: node.querySelector('.file-name').textContent.trim() 
+            };
         });
-    </script>
+        const blob = new Blob([JSON.stringify({ 
+            project: 'CodeSync Project', 
+            files: list 
+        }, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `codesync-export-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast('✓ Project exported');
+    }
+
+    function commitChanges() {
+        const message = prompt('Enter commit message:');
+        if (message && message.trim()) {
+            saveCurrentRepo();
+            toast('✓ Committed: ' + message.trim());
+        }
+    }
+
+    function showAISuggestions() {
+        if (!selectedId) { 
+            toast('⚠ Open a file to get AI suggestions'); 
+            return; 
+        }
+        const suggestions = [
+            '• Add comprehensive error handling',
+            '• Implement input validation',
+            '• Add JSDoc comments for functions',
+            '• Break down complex functions',
+            '• Remove unused code and imports',
+            '• Use consistent naming conventions',
+            '• Add unit tests coverage'
+        ];
+        const selected = suggestions.sort(() => Math.random() - 0.5).slice(0, 4);
+        alert('🤖 AI Suggestions:\n\n' + selected.join('\n'));
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        document.querySelectorAll('.file-item').forEach(node => {
+            const text = node.innerText.toLowerCase();
+            node.style.display = text.includes(q) ? 'flex' : 'none';
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            saveCurrentRepo();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+            e.preventDefault();
+            toggleTheme();
+        }
+    });
+
+    window.addEventListener('load', () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            editor.setTheme('ace/theme/chrome');
+        }
+
+        const first = document.querySelector('.file-item');
+        if (first) {
+            const id = first.dataset.id;
+            if (id) selectFile(id);
+        }
+    });
+
+    // Expose functions globally
+    window.openCreateModal = openCreateModal;
+    window.closeCreateModal = closeCreateModal;
+    window.selectFile = selectFile;
+    window.deleteRepo = deleteRepo;
+    window.saveCurrentRepo = saveCurrentRepo;
+    window.toggleTheme = toggleTheme;
+    window.commitChanges = commitChanges;
+    window.showAISuggestions = showAISuggestions;
+    window.openSettings = openSettings;
+    window.selectPrivacy = selectPrivacy;
+    window.formatCode = formatCode;
+</script>
 {% endblock js %}
