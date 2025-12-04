@@ -574,10 +574,10 @@
                 <p class="section-description">Manage your personal information and account preferences</p>
 
                 <div class="profile-info">
-                    <div class="profile-avatar-large">NP</div>
+                    <div class="profile-avatar-large">{{ request.user.username|first|upper|default:'U' }}</div>
                     <div>
-                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">Nishal Kumar Pandit</h4>
-                        <p style="color: var(--text-secondary); margin: 0;">nihalpandit000@gmail.com</p>
+                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">{{ request.user.get_full_name|default:request.user.username|default:'User' }}</h4>
+                        <p style="color: var(--text-secondary); margin: 0;">{{ request.user.email|default:'user@example.com' }}</p>
                         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Member since March 2024</p>
                     </div>
                 </div>
@@ -588,7 +588,7 @@
                         <div class="setting-desc">Your display name across CodeSync AI</div>
                     </div>
                     <div class="setting-control">
-                        <input type="text" class="form-control" value="Nihal Pandit" style="width: 200px;">
+                        <input type="text" class="form-control" value="{{ request.user.get_full_name|default:request.user.username|default:'User' }}" style="width: 200px;">
                     </div>
                 </div>
 
@@ -598,19 +598,11 @@
                         <div class="setting-desc">Primary email for notifications and account recovery</div>
                     </div>
                     <div class="setting-control">
-                        <input type="email" class="form-control" value="abc@gmail.com" style="width: 250px;">
+                        <input type="email" class="form-control" value="{{ request.user.email|default:'user@example.com' }}" style="width: 250px;">
                     </div>
                 </div>
 
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Username</div>
-                        <div class="setting-desc">Your unique identifier on the platform</div>
-                    </div>
-                    <div class="setting-control">
-                        <input type="text" class="form-control" value="Nihal pandit" style="width: 200px;">
-                    </div>
-                </div>
+
 
                 <div class="setting-item">
                     <div class="setting-info">
@@ -642,60 +634,30 @@
             <div id="repositories-section" class="settings-section" style="display: none;">
                 <h2 class="section-title">Repository Access Management</h2>
                 <p class="section-description">Control access permissions for your repositories</p>
-
+               
+               {% for repo in repos %}
+                
                 <div class="repo-item">
                     <div class="repo-info">
                         <i class="fas fa-folder repo-icon"></i>
                         <div>
-                            <div class="repo-name">ai-chatbot</div>
-                            <div class="repo-access">Private repository • 3 collaborators</div>
+                            <div class="repo-name">{{ repo.repo_name }}</div>
+                            <!-- <div class="repo-access">Private repository • 3 collaborators</div> -->
                         </div>
                     </div>
                     <div class="access-controls">
                         <select class="form-select" style="width: 120px;">
                             <option>Private</option>
                             <option>Public</option>
-                            <option>Internal</option>
                         </select>
                         <button class="btn btn-outline-secondary btn-sm">Manage</button>
                     </div>
                 </div>
 
-                <div class="repo-item">
-                    <div class="repo-info">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <div>
-                            <div class="repo-name">web-scraper</div>
-                            <div class="repo-access">Public repository • 8 collaborators</div>
-                        </div>
-                    </div>
-                    <div class="access-controls">
-                        <select class="form-select" style="width: 120px;">
-                            <option>Private</option>
-                            <option selected>Public</option>
-                            <option>Internal</option>
-                        </select>
-                        <button class="btn btn-outline-secondary btn-sm">Manage</button>
-                    </div>
-                </div>
+              
+                {% endfor %}
 
-                <div class="repo-item">
-                    <div class="repo-info">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <div>
-                            <div class="repo-name">react-dashboard</div>
-                            <div class="repo-access">Private repository • 2 collaborators</div>
-                        </div>
-                    </div>
-                    <div class="access-controls">
-                        <select class="form-select" style="width: 120px;">
-                            <option selected>Private</option>
-                            <option>Public</option>
-                            <option>Internal</option>
-                        </select>
-                        <button class="btn btn-outline-secondary btn-sm">Manage</button>
-                    </div>
-                </div>
+         
 
                 <div class="setting-item mt-4">
                     <div class="setting-info">
