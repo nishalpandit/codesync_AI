@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %} CodeSync AI - Collaborate on Code in Real-Time with AI {% endblock title%}
 {% block css %}
-  <style>
+    <style>
         :root {
             --bg-primary: #0d1117;
             --bg-secondary: #161b22;
@@ -12,183 +12,633 @@
             --accent-hover: #388bfd;
             --border: #30363d;
             --success: #238636;
+            --gradient-1: #667eea;
+            --gradient-2: #764ba2;
+            --gradient-3: #ec4899;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
         }
 
-        .navbar-dark {
-            background-color: var(--bg-secondary) !important;
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(88, 166, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(13, 17, 23, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .navbar-brand {
-            font-weight: bold;
             font-size: 1.5rem;
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(88, 166, 255, 0.1) 0%, transparent 50%);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero-subtitle {
-            font-size: 1.25rem;
+        .nav-link {
             color: var(--text-secondary);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .btn-nav-primary {
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-nav-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 8rem 0 4rem;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            background-size: 200% auto;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
             margin-bottom: 2rem;
-            line-height: 1.6;
         }
 
-        .btn-primary {
-            background-color: var(--accent);
-            border-color: var(--accent);
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline-secondary {
-            color: var(--text-primary);
-            border-color: var(--border);
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: var(--bg-tertiary);
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-            transform: translateY(-2px);
-        }
-
-        .features-section {
-            padding: 100px 0;
-            background-color: var(--bg-secondary);
-        }
-
-        .feature-card {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border);
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            border: none;
+            padding: 1rem 2.5rem;
             border-radius: 12px;
-            padding: 2rem;
-            height: 100%;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: white;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
+        .btn-hero-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-hero-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(88, 166, 255, 0.5);
+        }
+
+        .btn-hero-outline {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: all 0.3s;
+        }
+
+        .btn-hero-outline:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Code Preview */
+        .code-preview {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.95rem;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .code-preview::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 12px;
+            height: 12px;
+            background: #ff5f56;
+            border-radius: 50%;
+            box-shadow: 20px 0 #ffbd2e, 40px 0 #27ca3f;
+        }
+
+        .code-line {
+            padding-left: 70px;
+            margin: 0.4rem 0;
+            line-height: 1.6;
+        }
+
+        .code-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background: var(--accent);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 6rem 0;
+            background: rgba(30, 41, 59, 0.2);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.1);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0.75rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title h2 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
         .feature-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-15px);
             border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(88, 166, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(88, 166, 255, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.75rem;
             margin-bottom: 1.5rem;
-            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .feature-title {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
         }
 
         .feature-description {
             color: var(--text-secondary);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 6rem 0;
+            background-color: var(--bg-primary);
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .step-card:hover .step-number {
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            color: var(--text-secondary);
             line-height: 1.6;
         }
 
+        /* Testimonials */
+        .testimonials-section {
+            padding: 6rem 0;
+            background: rgba(30, 41, 59, 0.2);
+        }
+
+        .testimonial-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            height: 100%;
+            transition: all 0.3s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        .testimonial-text {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .author-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .author-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            border-radius: 24px;
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-box h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .cta-box p {
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-cta {
+            background: white;
+            color: var(--gradient-1);
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            border: none;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
         .footer {
             background-color: var(--bg-primary);
             border-top: 1px solid var(--border);
-            padding: 50px 0 30px;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .footer-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: all 0.3s;
         }
 
         .footer-links a:hover {
             color: var(--accent);
+            transform: translateX(5px);
         }
 
-        .stats-section {
-            padding: 80px 0;
-            background-color: var(--bg-primary);
+        .footer-heading {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
         }
 
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
+        .social-links {
+            display: flex;
+            gap: 1rem;
         }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            display: block;
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: rgba(148, 163, 184, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: all 0.3s;
+            font-size: 1.125rem;
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
+        .social-link:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-5px);
         }
 
+        /* Particles */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: rgba(88, 166, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 8s ease-in-out infinite;
+        }
+
+        @keyframes particle-float {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5rem;
@@ -198,54 +648,41 @@
                 font-size: 1.1rem;
             }
 
-            .feature-card {
-                margin-bottom: 2rem;
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .cta-box h2 {
+                font-size: 2rem;
+            }
+
+            .code-preview {
+                font-size: 0.8rem;
             }
         }
 
-        .code-preview {
-            background-color: var(--bg-primary);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 2rem 0;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 0.9rem;
-            border: 1px solid var(--border);
-            position: relative;
+        /* Loading Animation */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
         }
 
-        .code-preview::before {
-            content: '';
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 12px;
-            height: 12px;
-            background: #ff5f56;
-            border-radius: 50%;
-            box-shadow: 20px 0 #ffbd2e, 40px 0 #27ca3f;
-        }
-
-        .code-line {
-            padding-left: 60px;
-            margin: 0.25rem 0;
-        }
-
-        .animate-pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 {% endblock css %}
 
 {% block nav %}
 
- <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <i class="fas fa-code-branch me-2"></i>CodeSync AI
@@ -254,9 +691,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'features' %}">Features</a>
+                        <a class="nav-link" href="{% url 'features'  %}">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
@@ -264,8 +707,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'auth' %}">Login</a>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-nav-primary" onclick="launchEditor()">
+                            <i class="fas fa-rocket me-2"></i>Launch Editor
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -277,27 +722,34 @@
 
 {% block content %}
 
-  <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- Hero Section -->
+    <section class="hero-section fade-in">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="hero-content">
-                        <h1 class="hero-title">Collaborate on Code in Real-Time with AI</h1>
-                        <p class="hero-subtitle">
-                            Experience the future of coding with AI-powered collaboration. Write, review, and deploy code together with intelligent assistance that understands your project.
-                        </p>
-                        <div class="d-flex flex-wrap gap-3">
-                            <a href="{% url 'auth' %}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-rocket me-2"></i>Get Started Free
-                            </a>
-                            <a href="{% url 'about' %}" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-play me-2"></i>Live Demo
-                            </a>
-                        </div>
+                    <h1 class="hero-title">
+                        Code Together,
+                        <span class="gradient-text">Create Faster</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Experience the future of coding with AI-powered collaboration. Write, review, and deploy code together with intelligent assistance that understands your project.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-hero-primary" onclick="getStarted()">
+                            <i class="fas fa-rocket me-2"></i>Get Started Free
+                        </button>
+                        <button class="btn btn-hero-outline" onclick="watchDemo()">
+                            <i class="fas fa-play-circle me-2"></i>Watch Demo
+                        </button>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-check-circle text-success me-2"></i>No credit card required
+                            <i class="fas fa-check-circle text-success ms-3 me-2"></i>Free forever plan
+                        </small>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 mt-5 mt-lg-0">
                     <div class="code-preview">
                         <div class="code-line"><span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">collaborateWithAI</span>() {</div>
                         <div class="code-line">  <span style="color: #7ee787;">const</span> <span style="color: #ffa657;">suggestion</span> = <span style="color: #79c0ff;">AI</span>.<span style="color: #d2a8ff;">generateCode</span>();</div>
@@ -306,8 +758,8 @@
                         <div class="code-line">  <span style="color: #ff7b72;">return</span> {</div>
                         <div class="code-line">    <span style="color: #7ee787;">productivity</span>: <span style="color: #a5d6ff;">'10x faster'</span>,</div>
                         <div class="code-line">    <span style="color: #7ee787;">bugs</span>: <span style="color: #a5d6ff;">'90% fewer'</span>,</div>
-                        <div class="code-line">    <span style="color: #7ee787;">satisfaction</span>: <span style="color: #a5d6ff;">'through the roof'</span> <span class="animate-pulse">⚡</span></div>
-                        <div class="code-line">  };</div>
+                        <div class="code-line">    <span style="color: #7ee787;">satisfaction</span>: <span style="color: #a5d6ff;">'through the roof'</span> <span style="animation: pulse 2s infinite;">⚡</span></div>
+                        <div class="code-line">  };<span class="code-cursor"></span></div>
                         <div class="code-line">}</div>
                     </div>
                 </div>
@@ -319,28 +771,28 @@
     <section class="stats-section">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <span class="stat-number">50K+</span>
-                        <div class="stat-label">Developers</div>
+                        <span class="stat-number" data-target="50000">0</span>
+                        <div class="stat-label">Active Developers</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <span class="stat-number">1M+</span>
+                        <span class="stat-number" data-target="1000000">0</span>
                         <div class="stat-label">AI Suggestions</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="150">0</span>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
                     <div class="stat-item">
                         <span class="stat-number">99.9%</span>
                         <div class="stat-label">Uptime</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-item">
-                        <span class="stat-number">24/7</span>
-                        <div class="stat-label">AI Support</div>
                     </div>
                 </div>
             </div>
@@ -350,52 +802,107 @@
     <!-- Features Section -->
     <section class="features-section" id="features">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-4 fw-bold mb-3">Powerful Features for Modern Development</h2>
-                <p class="lead text-secondary">Everything you need to build amazing software, together with AI</p>
+            <div class="section-title">
+                <h2>Powerful Features for Modern Developers</h2>
+                <p class="section-subtitle">Everything you need to code collaboratively and efficiently</p>
             </div>
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
                             <i class="fas fa-users"></i>
                         </div>
                         <h4 class="feature-title">Real-Time Editing</h4>
                         <p class="feature-description">
-                            Collaborate with your team in real-time. See changes as they happen, with conflict resolution and live cursors.
+                            Collaborate with your team in real-time. See changes as they happen with live cursors and instant synchronization.
                         </p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
                             <i class="fas fa-robot"></i>
                         </div>
-                        <h4 class="feature-title">AI Suggestions</h4>
+                        <h4 class="feature-title">AI Assistance</h4>
                         <p class="feature-description">
                             Get intelligent code completions, bug fixes, and optimization suggestions powered by advanced AI models.
                         </p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
                             <i class="fas fa-code-branch"></i>
                         </div>
                         <h4 class="feature-title">Version Control</h4>
                         <p class="feature-description">
-                            Built-in Git integration with visual diff tools, branch management, and seamless pull request workflows.
+                            Built-in Git integration with visual diff tools, branch management, and seamless workflows.
                         </p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
                             <i class="fas fa-comments"></i>
                         </div>
                         <h4 class="feature-title">Team Chat</h4>
                         <p class="feature-description">
-                            Integrated chat with code snippets, file sharing, and AI-powered code explanations right in context.
+                            Integrated chat with code snippets, file sharing, and AI-powered explanations in context.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+                            <i class="fas fa-save"></i>
+                        </div>
+                        <h4 class="feature-title">Auto-Save</h4>
+                        <p class="feature-description">
+                            Never lose your work. Automatic saving and cloud sync keep your code safe and accessible.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #30cfd0, #330867);">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h4 class="feature-title">Customizable</h4>
+                        <p class="feature-description">
+                            Personalize your coding environment with themes, syntax highlighting, and custom layouts.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h4 class="feature-title">Extensions</h4>
+                        <p class="feature-description">
+                            Extend functionality with hundreds of plugins and integrations for your favorite tools.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Secure</h4>
+                        <p class="feature-description">
+                            Enterprise-grade security with end-to-end encryption and compliance with industry standards.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="feature-title">Lightning Fast</h4>
+                        <p class="feature-description">
+                            Optimized performance with instant loading, fast compilation, and efficient resource usage.
                         </p>
                     </div>
                 </div>
@@ -403,77 +910,178 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer" id="contact">
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5 class="fw-bold mb-3">
-                        <i class="fas fa-code-branch me-2"></i>CodeSync AI
-                    </h5>
-                    <p class="text-secondary">
-                        Revolutionizing software development with AI-powered collaboration tools.
-                    </p>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Product</h6>
-                    <div class="footer-links d-flex flex-column">
-                        <a href="{% url 'features' %}" class="mb-2">Features</a>
-                        <a href="{% url 'dashboard' %}" class="mb-2">Dashboard</a>
-                        <a href="" class="mb-2">AI Assistant</a>
-                        <a href="{% url 'billing' %}" class="mb-2">Pricing</a>
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p class="section-subtitle">Get started in three simple steps</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Create Your Project</h4>
+                        <p class="step-description">
+                            Sign up and create a new project or import existing code from GitHub, GitLab, or Bitbucket.
+                        </p>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Company</h6>
-                    <div class="footer-links d-flex flex-column">
-                        <a href="{% url 'about' %}" class="mb-2" id="about">About</a>
-                        <a href="{% url 'carrer' %}" class="mb-2">Careers</a>
-                        <a href="{% url 'blog' %}" class="mb-2">Blog</a>
-                        <a href="{% url 'contact' %}" class="mb-2">Contact</a>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">Invite Your Team</h4>
+                        <p class="step-description">
+                            Share your project with team members and start collaborating in real-time with live updates.
+                        </p>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Support</h6>
-                    <div class="footer-links d-flex flex-column">
-                        <a href="{% url 'help_center' %}" class="mb-2">Help Center</a>
-                        <a href="{% url 'community' %}" class="mb-2">Community</a>
-                        <a href="{% url 'api' %}" class="mb-2">API Docs</a>
-                        <a href="{% url 'status' %}" class="mb-2">Status</a>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Legal</h6>
-                    <div class="footer-links d-flex flex-column">
-                        <a href="{% url 'policy' %}" class="mb-2">Privacy</a>
-                        <a href="{% url 'terms' %}" class="mb-2">Terms</a>
-                        <a href="{% url 'security' %}" class="mb-2">Security</a>
-                        <a href="https://github.com" class="mb-2">
-                            <i class="fab fa-github me-1"></i>GitHub
-                        </a>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">Code & Deploy</h4>
+                        <p class="step-description">
+                            Write, test, and deploy your code with AI assistance, built-in tools, and seamless workflows.
+                        </p>
                     </div>
                 </div>
             </div>
-            <hr class="my-4" style="border-color: var(--border);">
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Loved by Developers Worldwide</h2>
+                <p class="section-subtitle">See what our users have to say</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "CodeSync AI has revolutionized how our team works together. The real-time collaboration and AI suggestions have increased our productivity by 40%!"
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">SK</div>
+                            <div>
+                                <p class="author-name">Sarah Kim</p>
+                                <p class="author-role">Lead Developer at TechCorp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "The AI-powered code completion is incredible. It's like having a senior developer looking over your shoulder, but without the pressure!"
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MJ</div>
+                            <div>
+                                <p class="author-name">Michael Johnson</p>
+                                <p class="author-role">Full Stack Developer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "Best collaborative coding platform I've used. The interface is intuitive, and the features are exactly what modern teams need."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">EP</div>
+                            <div>
+                                <p class="author-name">Emily Parker</p>
+                                <p class="author-role">Startup Founder</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to Transform Your Coding Experience?</h2>
+                <p>Join thousands of developers who are already coding smarter with CodeSync AI</p>
+                <button class="btn btn-cta" onclick="getStarted()">
+                    <i class="fas fa-rocket me-2"></i>Start Coding Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-brand mb-3">
+                        <i class="fas fa-code-branch me-2"></i>CodeSync AI
+                    </h5>
+                    <p class="text-secondary mb-4">
+                        Empowering developers to code collaboratively with the power of artificial intelligence.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="footer-heading">Product</h6>
+                    <div class="footer-links">
+                        <a href="{% url 'features' %}">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="{% url 'billing' %}">Pricing</a>
+                        <a href="#">Changelog</a>
+                        <a href="#">Roadmap</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="footer-heading">Resources</h6>
+                    <div class="footer-links">
+                        <a href="#">Documentation</a>
+                        <a href="{% url 'api' %}">API Reference</a>
+                        <a href="#">Tutorials</a>
+                        <a href="{% url 'blog' %}">Blog</a>
+                        <a href="{% url 'community' %}">Community</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="footer-heading">Company</h6>
+                    <div class="footer-links">
+                        <a href="{% url 'about' %}" id="about">About Us</a>
+                        <a href="{% url 'carrer' %}">Careers</a>
+                        <a href="#">Press Kit</a>
+                        <a href="{% url 'contact' %}">Contact</a>
+                        <a href="#">Partners</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="footer-heading">Legal</h6>
+                    <div class="footer-links">
+                        <a href="{% url 'policy' %}">Privacy Policy</a>
+                        <a href="{% url 'terms' %}">Terms of Service</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="{% url 'security' %}">Security</a>
+                        <a href="#">GDPR</a>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color: var(--border); margin: 2.5rem 0;">
             <div class="row align-items-center">
-                <div class="col-md-6">
+                <div class="col-md-6 text-center text-md-start">
                     <p class="text-secondary mb-0">&copy; 2025 CodeSync AI. All rights reserved.</p>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="d-flex justify-content-md-end gap-3">
-                        <a href="#" class="text-secondary">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-secondary">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="#" class="text-secondary">
-                            <i class="fab fa-discord"></i>
-                        </a>
-                        <a href="https://github.com" class="text-secondary">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-secondary mb-0">Made with <i class="fas fa-heart text-danger"></i> for developers worldwide</p>
                 </div>
             </div>
         </div>
@@ -484,60 +1092,181 @@
 
 {% block js %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Smooth scrolling for anchor links
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
 
-        // Add scroll effect to navbar
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.backgroundColor = 'rgba(13, 17, 23, 0.95)';
-                navbar.style.backdropFilter = 'blur(10px)';
-            } else {
-                navbar.style.backgroundColor = 'var(--bg-secondary)';
-                navbar.style.backdropFilter = 'none';
-            }
-        });
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
 
-        // Animate stats on scroll
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Intersection Observer for stats
         const observerOptions = {
-            threshold: 0.7
+            threshold: 0.5
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const statNumbers = entry.target.querySelectorAll('.stat-number');
-                    statNumbers.forEach(stat => {
-                        const finalValue = stat.textContent;
-                        stat.textContent = '0';
-
-                        // Simple animation for demo purposes
-                        setTimeout(() => {
-                            stat.textContent = finalValue;
-                        }, 200);
+                    const counters = entry.target.querySelectorAll('.stat-number[data-target]');
+                    counters.forEach(counter => {
+                        if (counter.textContent === '0') {
+                            animateCounter(counter);
+                        }
                     });
-                    observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
         const statsSection = document.querySelector('.stats-section');
-        if (statsSection) {
-            observer.observe(statsSection);
+        if (statsSection) observer.observe(statsSection);
+
+        // Fade in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const fadeElements = document.querySelectorAll('.feature-card, .testimonial-card, .step-card');
+        fadeElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeInObserver.observe(el);
+        });
+
+        // Create particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+            particle.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 8000);
         }
+
+        // Generate particles
+        setInterval(createParticle, 3000);
+
+        // Button functions
+        function launchEditor() {
+            location.href = '/auth'; }
+
+        function getStarted() {
+           location.href = '/auth';  
+        }
+
+        function watchDemo() {
+           
+        }
+
+        // Simulate real-time user count updates
+        setInterval(() => {
+            const userCountEl = document.querySelector('.stat-number[data-target="50000"]');
+            if (userCountEl && userCountEl.textContent !== '0') {
+                const currentCount = parseInt(userCountEl.textContent.replace(/,/g, ''));
+                const change = Math.floor(Math.random() * 20) - 10;
+                const newCount = Math.max(50000, currentCount + change);
+                userCountEl.textContent = newCount.toLocaleString();
+            }
+        }, 8000);
+
+        // Add scroll to top button
+        const scrollTopBtn = document.createElement('button');
+        scrollTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        scrollTopBtn.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--gradient-1));
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.4);
+        `;
+        document.body.appendChild(scrollTopBtn);
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.style.opacity = '1';
+                scrollTopBtn.style.transform = 'scale(1)';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+                scrollTopBtn.style.transform = 'scale(0.8)';
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        scrollTopBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.boxShadow = '0 6px 20px rgba(88, 166, 255, 0.6)';
+        });
+
+        scrollTopBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '0 4px 15px rgba(88, 166, 255, 0.4)';
+        });
+
+        // Console welcome message
+        console.log('%c🚀 Welcome to CodeSync AI! ', 'background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 24px; padding: 15px 30px; border-radius: 10px; font-weight: bold;');
+        console.log('%cInterested in joining our team?', 'color: #667eea; font-size: 16px; font-weight: bold;');
+        console.log('%cCheck out careers: codesync.ai/careers', 'color: #7d8590; font-size: 14px;');
+        console.log('%cBuilt with ❤️ by developers, for developers', 'color: #238636; font-size: 14px; font-style: italic;');
+
+        // Success message
+        console.log('%c✨ CodeSync AI Homepage Loaded Successfully! ', 'background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; font-size: 16px; padding: 10px 20px; border-radius: 8px; font-weight: bold;');
     </script>
 
 {% endblock js %}
