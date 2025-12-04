@@ -2,1118 +2,968 @@
 
 {% block title %} CodeSync AI - Dashboard {% endblock title %}
 {% block css %}
- <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #7d8590;
-            --accent: #58a6ff;
-            --accent-hover: #388bfd;
-            --border: #30363d;
-            --success: #238636;
-            --warning: #f85149;
-            --sidebar-width: 280px;
-        }
+<style>
+    :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --text-primary: #f0f6fc;
+        --text-secondary: #7d8590;
+        --accent: #58a6ff;
+        --accent-hover: #388bfd;
+        --border: #30363d;
+        --success: #238636;
+        --warning: #f85149;
+        --sidebar-width: 280px;
+    }
 
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background-color: var(--bg-secondary);
+        border-right: 1px solid var(--border);
+        z-index: 1000;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-brand {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sidebar-nav {
+        padding: 1rem 0;
+    }
+
+    .nav-item {
+        margin: 0.25rem 0;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-radius: 0;
+        position: relative;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        color: var(--accent);
+        background-color: rgba(88, 166, 255, 0.1);
+    }
+
+    .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--accent);
+    }
+
+    .nav-icon {
+        width: 20px;
+        text-align: center;
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+        min-height: 100vh;
+    }
+
+    .top-navbar {
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .navbar-left h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-input {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.5rem 1rem 0.5rem 2.5rem;
+        color: var(--text-primary);
+        width: 300px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background-color: var(--bg-secondary);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+    }
+
+    .profile-dropdown {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profile-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .profile-btn:hover {
+        background-color: var(--bg-tertiary);
+    }
+
+    .profile-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    /* Profile Dropdown Menu */
+    .profile-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        min-width: 200px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    .profile-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .profile-menu-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-menu-user {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-menu-email {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .profile-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .profile-menu-item:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .profile-menu-item i {
+        width: 16px;
+        text-align: center;
+    }
+
+    .profile-menu-divider {
+        height: 1px;
+        background-color: var(--border);
+        margin: 0.5rem 0;
+    }
+
+    .profile-menu-item.danger {
+        color: var(--warning);
+    }
+
+    .profile-menu-item.danger:hover {
+        background-color: rgba(248, 81, 73, 0.1);
+        color: var(--warning);
+    }
+
+    /* Logout Button Styles */
+    .btn-logout {
+        background: linear-gradient(135deg, #f85149 0%, #da3633 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(248, 81, 73, 0.2);
+    }
+
+    .btn-logout:hover {
+        background: linear-gradient(135deg, #da3633 0%, #c62828 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(248, 81, 73, 0.3);
+        color: white;
+    }
+
+    .btn-logout:active {
+        transform: translateY(0);
+    }
+
+    .content-area {
+        padding: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: 0 10px 30px rgba(88, 166, 255, 0.1);
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-icon.repos {
+        background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);
+    }
+
+    .stat-icon.ai {
+        background: linear-gradient(135deg, #a5f3fc 0%, #06b6d4 100%);
+        color: #0c4a6e;
+    }
+
+    .stat-icon.commits {
+        background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        color: #064e3b;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .stat-change {
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .stat-change.positive {
+        color: var(--success);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .btn-primary {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--accent-hover);
+        border-color: var(--accent-hover);
+        transform: translateY(-1px);
+    }
+
+    .repo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .repo-card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .repo-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: 0 10px 30px rgba(88, 166, 255, 0.1);
+    }
+
+    .repo-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .repo-icon {
+        color: var(--accent);
+        font-size: 1.2rem;
+    }
+
+    .repo-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .repo-privacy {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        margin-left: auto;
+    }
+
+    .repo-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        height: 15vh;
+        overflow: hidden;
+    }
+
+    .repo-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .repo-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .activity-section {
+        margin-top: 2rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: start;
+        gap: 0.75rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .activity-icon.commit {
+        background-color: var(--success);
+        color: white;
+    }
+
+    .activity-icon.pr {
+        background-color: var(--accent);
+        color: white;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        color: var(--text-primary);
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-meta {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .mobile-sidebar-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            z-index: 1000;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
+            transform: translateX(-100%);
         }
 
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .sidebar-brand {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            margin: 0.25rem 0;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-radius: 0;
-            position: relative;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--accent);
-            background-color: rgba(88, 166, 255, 0.1);
-        }
-
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: var(--accent);
-        }
-
-        .nav-icon {
-            width: 20px;
-            text-align: center;
+        .sidebar.open {
+            transform: translateX(0);
         }
 
         .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-
-        .top-navbar {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .navbar-left h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-            color: var(--text-primary);
-        }
-
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-input {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.5rem 1rem 0.5rem 2.5rem;
-            color: var(--text-primary);
-            width: 300px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background-color: var(--bg-secondary);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .profile-dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .profile-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .profile-btn:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .profile-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        /* Profile Dropdown Menu */
-        .profile-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            min-width: 200px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            margin-top: 0.5rem;
-        }
-
-        .profile-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .profile-menu-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .profile-menu-user {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .profile-menu-email {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .profile-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .profile-menu-item:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .profile-menu-item i {
-            width: 16px;
-            text-align: center;
-        }
-
-        .profile-menu-divider {
-            height: 1px;
-            background-color: var(--border);
-            margin: 0.5rem 0;
-        }
-
-        .profile-menu-item.danger {
-            color: var(--warning);
-        }
-
-        .profile-menu-item.danger:hover {
-            background-color: rgba(248, 81, 73, 0.1);
-            color: var(--warning);
-        }
-
-        /* Logout Button Styles */
-        .btn-logout {
-            background: linear-gradient(135deg, #f85149 0%, #da3633 100%);
-            color: white;
-            border: none;
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(248, 81, 73, 0.2);
-        }
-
-        .btn-logout:hover {
-            background: linear-gradient(135deg, #da3633 0%, #c62828 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(248, 81, 73, 0.3);
-            color: white;
-        }
-
-        .btn-logout:active {
-            transform: translateY(0);
-        }
-
-        .content-area {
-            padding: 2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.1);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .stat-icon.repos {
-            background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);
-        }
-
-        .stat-icon.ai {
-            background: linear-gradient(135deg, #a5f3fc 0%, #06b6d4 100%);
-            color: #0c4a6e;
-        }
-
-        .stat-icon.commits {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: #064e3b;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .stat-change {
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.5rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .btn-primary {
-            background-color: var(--accent);
-            border-color: var(--accent);
-            font-weight: 500;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-
-        .repo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .repo-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .repo-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.1);
-        }
-
-        .repo-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .repo-icon {
-            color: var(--accent);
-            font-size: 1.2rem;
-        }
-
-        .repo-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .repo-privacy {
-            background-color: var(--bg-tertiary);
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            margin-left: auto;
-        }
-
-        .repo-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .repo-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .repo-stat {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .activity-section {
-            margin-top: 2rem;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: start;
-            gap: 0.75rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .activity-icon.commit {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .activity-icon.pr {
-            background-color: var(--accent);
-            color: white;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-meta {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
+            margin-left: 0;
         }
 
         .mobile-sidebar-toggle {
+            display: block;
+        }
+
+        .search-input {
+            width: 150px;
+        }
+
+        .content-area {
+            padding: 1rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .repo-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-btn span {
             display: none;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-sidebar-toggle {
-                display: block;
-            }
-
-            .search-input {
-                width: 150px;
-            }
-
-            .content-area {
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .repo-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-btn span {
-                display: none;
-            }
-
-            .btn-logout {
-                display: none;
-            }
-
-            .profile-menu {
-                right: -1rem;
-            }
+        .btn-logout {
+            display: none;
         }
-    </style>
+
+        .profile-menu {
+            right: -1rem;
+        }
+    }
+</style>
 {% endblock css %}
 {% block nav %} {% endblock nav %}
 {% block content %}
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="{% url 'index' %}" class="sidebar-brand">
-                <i class="fas fa-code-branch"></i>
-                CodeSync AI
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'index' %}" class="sidebar-brand">
+            <i class="fas fa-code-branch"></i>
+            CodeSync AI
+        </a>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-item">
+            <a href="#" class="nav-link active">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Dashboard</span>
             </a>
         </div>
-        <nav class="sidebar-nav">
-            <div class="nav-item">
-                <a href="#" class="nav-link active">
-                    <i class="fas fa-home nav-icon"></i>
-                    <span>Dashboard</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="{% url 'repo' %}" class="nav-link">
-                    <i class="fas fa-folder nav-icon"></i>
-                    <span>My Repositories</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="#" class="nav-link" onclick="createRepo()">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <span>Create Repository</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="{% url 'pulls' %}" class="nav-link">
-                    <i class="fas fa-code-branch nav-icon"></i>
-                    <span>Pull Requests</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-robot nav-icon"></i>
-                    <span>AI Assistant</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-users nav-icon"></i>
-                    <span>Teams</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="{% url 'setting' %}" class="nav-link">
-                    <i class="fas fa-cog nav-icon"></i>
-                    <span>Settings</span>
-                </a>
-            </div>
-        </nav>
-    </div>
+        <div class="nav-item">
+            <a href="{% url 'repo' %}" class="nav-link">
+                <i class="fas fa-folder nav-icon"></i>
+                <span>My Repositories</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="{% url 'repo' %}" class="nav-link" onclick="createRepo()">
+                <i class="fas fa-plus nav-icon"></i>
+                <span>Create Repository</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="{% url 'pulls' %}" class="nav-link">
+                <i class="fas fa-code-branch nav-icon"></i>
+                <span>Pull Requests</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-robot nav-icon"></i>
+                <span>AI Assistant</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="{% url 'team' %}" class="nav-link">
+                <i class="fas fa-users nav-icon"></i>
+                <span>Teams</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="{% url 'setting' %}" class="nav-link">
+                <i class="fas fa-cog nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navbar -->
-        <div class="top-navbar">
-            <div class="navbar-left">
-                <button class="mobile-sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1>Dashboard</h1>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-left">
+            <button class="mobile-sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>Dashboard</h1>
+        </div>
+        <div class="navbar-right">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search repositories...">
             </div>
-            <div class="navbar-right">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search repositories...">
-                </div>
-                <div class="profile-dropdown">
-                    <button class="profile-btn" onclick="toggleProfileMenu()">
-                        <div class="profile-avatar">{{ request.user.username|first|upper|default:'U' }}</div>
-                        <span>Hello, {{ request.user.username|default:'buddy' }}</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    
-                    <!-- Profile Dropdown Menu -->
-                    <div class="profile-menu" id="profileMenu">
-                        <div class="profile-menu-header">
-                            <div class="profile-menu-user">{{ request.user.get_full_name|default:request.user.username|default:'User' }}</div>
-                            <div class="profile-menu-email">{{ request.user.email|default:'user@example.com' }}</div>
-                        </div>
-                        
-                        
-                        <a href="{% url 'repo' %}" class="profile-menu-item">
-                            <i class="fas fa-folder"></i>
-                            <span>Your Repositories</span>
-                        </a>
-                        
-                   
-                        
-                        <a href="{% url 'billing' %}" class="profile-menu-item" onclick="upgradeAccount()">
-                            <i class="fas fa-crown"></i>
-                            <span>Upgrade to Pro</span>
-                        </a>
-                        
-                        
-                        <a href="{% url 'setting' %}" class="profile-menu-item">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                        
-                        <a href="{% url 'help_center' %}" class="profile-menu-item" onclick="viewHelp()">
-                            <i class="fas fa-question-circle"></i>
-                            <span>Help & Support</span>
-                        </a>
-                        
-                        <a href="#" class="profile-menu-item" onclick="sendFeedback()">
-                            <i class="fas fa-comment"></i>
-                            <span>Send Feedback</span>
-                        </a>
-                        
-                        <div class="profile-menu-divider"></div>
-                        
-                        <a href="{% url 'logout' %}" class="profile-menu-item danger">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Sign Out</span>
-                        </a>
+            <div class="profile-dropdown">
+                <button class="profile-btn" onclick="toggleProfileMenu()">
+                    <div class="profile-avatar">{{ request.user.username|first|upper|default:'U' }}</div>
+                    <span>Hello, {{ request.user.username|default:'buddy' }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+
+                <!-- Profile Dropdown Menu -->
+                <div class="profile-menu" id="profileMenu">
+                    <div class="profile-menu-header">
+                        <div class="profile-menu-user">{{
+                            request.user.get_full_name|default:request.user.username|default:'User' }}</div>
+                        <div class="profile-menu-email">{{ request.user.email|default:'user@example.com' }}</div>
                     </div>
-                    
-                    <!-- Desktop Logout Button -->
-                    <a href="{% url 'logout' %}" class="btn-logout">
+
+
+                    <a href="{% url 'repo' %}" class="profile-menu-item">
+                        <i class="fas fa-folder"></i>
+                        <span>Your Repositories</span>
+                    </a>
+
+
+
+                    <a href="{% url 'billing' %}" class="profile-menu-item" onclick="upgradeAccount()">
+                        <i class="fas fa-crown"></i>
+                        <span>Upgrade to Pro</span>
+                    </a>
+
+
+                    <a href="{% url 'setting' %}" class="profile-menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+
+                    <a href="{% url 'help_center' %}" class="profile-menu-item" onclick="viewHelp()">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help & Support</span>
+                    </a>
+
+                    <a href="#" class="profile-menu-item" onclick="sendFeedback()">
+                        <i class="fas fa-comment"></i>
+                        <span>Send Feedback</span>
+                    </a>
+
+                    <div class="profile-menu-divider"></div>
+
+                    <a href="{% url 'logout' %}" class="profile-menu-item danger">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Rest of the content remains the same -->
-        <!-- Content Area -->
-        <div class="content-area">
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon repos">
-                            <i class="fas fa-folder"></i>
-                        </div>
-                    </div>
-                    <h3 class="stat-value">12</h3>
-                    <div class="stat-label">Total Repositories</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        +2 this month
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon ai">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                    </div>
-                    <h3 class="stat-value">847</h3>
-                    <div class="stat-label">AI Suggestions Used</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        +156 this week
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon commits">
-                            <i class="fas fa-code-commit"></i>
-                        </div>
-                    </div>
-                    <h3 class="stat-value">34</h3>
-                    <div class="stat-label">Commits This Week</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        +12 from last week
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Repositories Section -->
-            <div class="section-header">
-                <h2 class="section-title">Recent Repositories</h2>
-                <button class="btn btn-primary" onclick="createRepo()">
-                    <i class="fas fa-plus me-2"></i>New Repository
-                </button>
-            </div>
-
-            <div class="repo-grid">
-                <div class="repo-card" onclick="openRepo('ai-chatbot')">
-                    <div class="repo-header">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <h4 class="repo-name">ai-chatbot</h4>
-                        <span class="repo-privacy">Private</span>
-                    </div>
-                    <p class="repo-description">
-                        An intelligent chatbot built with Python and TensorFlow for natural language processing
-                    </p>
-                    <div class="repo-stats">
-                        <div class="repo-stat">
-                            <i class="fas fa-circle" style="color: #f1e05a;"></i>
-                            JavaScript
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-star"></i>
-                            23
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-code-branch"></i>
-                            5
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-clock"></i>
-                            2 hours ago
-                        </div>
-                    </div>
-                </div>
-
-                <div class="repo-card" onclick="openRepo('web-scraper')">
-                    <div class="repo-header">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <h4 class="repo-name">web-scraper</h4>
-                        <span class="repo-privacy">Public</span>
-                    </div>
-                    <p class="repo-description">
-                        A powerful web scraping tool with BeautifulSoup and Selenium integration
-                    </p>
-                    <div class="repo-stats">
-                        <div class="repo-stat">
-                            <i class="fas fa-circle" style="color: #3572A5;"></i>
-                            Python
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-star"></i>
-                            45
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-code-branch"></i>
-                            3
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-clock"></i>
-                            1 day ago
-                        </div>
-                    </div>
-                </div>
-
-                <div class="repo-card" onclick="openRepo('react-dashboard')">
-                    <div class="repo-header">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <h4 class="repo-name">react-dashboard</h4>
-                        <span class="repo-privacy">Private</span>
-                    </div>
-                    <p class="repo-description">
-                        Modern dashboard built with React, TypeScript, and Material-UI components
-                    </p>
-                    <div class="repo-stats">
-                        <div class="repo-stat">
-                            <i class="fas fa-circle" style="color: #2b7489;"></i>
-                            TypeScript
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-star"></i>
-                            67
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-code-branch"></i>
-                            8
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-clock"></i>
-                            3 days ago
-                        </div>
-                    </div>
-                </div>
-
-                <div class="repo-card" onclick="openRepo('mobile-app')">
-                    <div class="repo-header">
-                        <i class="fas fa-folder repo-icon"></i>
-                        <h4 class="repo-name">mobile-app</h4>
-                        <span class="repo-privacy">Private</span>
-                    </div>
-                    <p class="repo-description">
-                        Cross-platform mobile application using React Native and Firebase
-                    </p>
-                    <div class="repo-stats">
-                        <div class="repo-stat">
-                            <i class="fas fa-circle" style="color: #f1e05a;"></i>
-                            JavaScript
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-star"></i>
-                            12
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-code-branch"></i>
-                            2
-                        </div>
-                        <div class="repo-stat">
-                            <i class="fas fa-clock"></i>
-                            5 days ago
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity Section -->
-            <div class="activity-section">
-                <div class="section-header">
-                    <h2 class="section-title">Recent Activity</h2>
-                    <a href="#" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">
-                        View all activity <i class="fas fa-arrow-right ms-1"></i>
+                        <span>Sign Out</span>
                     </a>
                 </div>
 
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon commit">
-                            <i class="fas fa-code-commit"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">
-                                Pushed 3 commits to <strong>ai-chatbot</strong>
-                            </div>
-                            <div class="activity-meta">
-                                Added neural network training module • 2 hours ago
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon pr">
-                            <i class="fas fa-code-branch"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">
-                                Opened pull request in <strong>web-scraper</strong>
-                            </div>
-                            <div class="activity-meta">
-                                Feature: Add proxy support for requests • 1 day ago
-                            </div>
-                        </div>
-                    </div>
-
-                                      <div class="activity-item">
-                        <div class="activity-icon commit">
-                            <i class="fas fa-code-commit"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">
-                                Merged pull request in <strong>react-dashboard</strong>
-                            </div>
-                            <div class="activity-meta">
-                                UI improvements and dark theme support • 2 days ago
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon pr">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">
-                                AI suggested optimization for <strong>mobile-app</strong>
-                            </div>
-                            <div class="activity-meta">
-                                Performance improvements in navigation • 3 days ago
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Desktop Logout Button -->
+                <a href="{% url 'logout' %}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
             </div>
         </div>
     </div>
-{% endblock content %}
 
-{% block js %}
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
-        }
+    <!-- Rest of the content remains the same -->
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon repos">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">{{ repo_count }}</h3>
+                <div class="stat-label">Total Repositories</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    +2 this month
+                </div>
+            </div>
 
-        function toggleProfileMenu() {
-            const profileMenu = document.getElementById('profileMenu');
-            profileMenu.classList.toggle('show');
-        }
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon ai">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">847</h3>
+                <div class="stat-label">AI Suggestions Used</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    +156 this week
+                </div>
+            </div>
 
-        // Profile menu functions
-        function viewProfile() {
-            alert('Redirecting to profile page...');
-            // window.location.href = '/profile/';
-        }
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon commits">
+                        <i class="fas fa-code-commit"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">34</h3>
+                <div class="stat-label">Commits This Week</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    +12 from last week
+                </div>
+            </div>
+        </div>
 
-        function viewStars() {
-            alert('Redirecting to starred repositories...');
-            // window.location.href = '/stars/';
-        }
+        <!-- Recent Repositories Section -->
+        <div class="section-header">
+            <h2 class="section-title">Recent Repositories</h2>
+        </div>
 
-        function viewGists() {
-            alert('Redirecting to your gists...');
-            // window.location.href = '/gists/';
-        }
+        <div class="repo-grid">
 
-        function upgradeAccount() {
-            alert('Redirecting to upgrade page...');
-            // window.location.href = '/upgrade/';
-        }
+            {% for repo in repos %}
+            <div class="repo-card" style="cursor: pointer;" onclick="window.location.href={% url 'repo' %}">
+                <div class="repo-header">
+                    <i class="fas fa-folder repo-icon"></i>
+                    <h4 class="repo-name">{{ repo.repo_name }}</h4>
+                    <span class="repo-privacy">Private</span>
+                </div>
 
-        function viewBilling() {
-            alert('Redirecting to billing page...');
-            // window.location.href = '/billing/';
-        }
+                <p class="repo-description">
+                    {{ repo.repo_description }}
+                </p>
 
-        function viewHelp() {
-            alert('Opening help center...');
-            // window.open('/help/', '_blank');
-        }
+                <div class="repo-stats">
+                    <div class="repo-stat">
+                        <i class="fas fa-circle" style="color: #f1e05a;"></i>
+                        {{ repo.type }}
+                    </div>
 
-        function sendFeedback() {
-            alert('Opening feedback form...');
-            // window.location.href = '/feedback/';
-        }
+                    <div class="repo-stat">
+                        <i class="fas fa-code-branch"></i>
+                        5
+                    </div>
 
-        function createRepo() {
-            alert('Create Repository functionality would be implemented here');
-        }
+                    <div class="repo-stat">
+                        <i class="fas fa-clock"></i>
+                        {{ repo.created_at|date:"d-b-Y H:i A" }}
+                    </div>
+                </div>
 
-        function openRepo(repoName) {
-            window.location.href = `repo.html?repo=${repoName}`;
-        }
+            </div>
+            {% endfor %}
 
-        // Search functionality
-        const searchInput = document.querySelector('.search-input');
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            console.log('Searching for:', searchTerm);
-        });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.mobile-sidebar-toggle');
-            const profileMenu = document.getElementById('profileMenu');
-            const profileBtn = document.querySelector('.profile-btn');
 
-            // Close sidebar on mobile when clicking outside
-            if (window.innerWidth <= 768 &&
-                sidebar.classList.contains('open') &&
-                !sidebar.contains(e.target) &&
-                !toggle.contains(e.target)) {
-                sidebar.classList.remove('open');
-            }
 
-            // Close profile menu when clicking outside
-            if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-                profileMenu.classList.remove('show');
-            }
-        });
+            {% endblock content %}
 
-        // Prevent profile menu from closing when clicking inside it
-        document.getElementById('profileMenu').addEventListener('click', function(e) {
-            // Only close if clicking on a link (not the menu itself)
-            if (e.target.classList.contains('profile-menu-item') || e.target.closest('.profile-menu-item')) {
-                document.getElementById('profileMenu').classList.remove('show');
-            }
-        });
+            {% block js %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+            <script>
+                function toggleSidebar() {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('open');
+                }
 
-        // Animated counter for stats
-        window.addEventListener('load', function() {
-            const statValues = document.querySelectorAll('.stat-value');
-            statValues.forEach(stat => {
-                const finalValue = stat.textContent;
-                const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
-                let currentValue = 0;
-                const increment = Math.ceil(numericValue / 50);
-                const suffix = finalValue.replace(/[\d,]/g, '');
+                function toggleProfileMenu() {
+                    const profileMenu = document.getElementById('profileMenu');
+                    profileMenu.classList.toggle('show');
+                }
 
-                stat.textContent = '0' + suffix;
+                // Profile menu functions
+                function viewProfile() {
+                    alert('Redirecting to profile page...');
+                    // window.location.href = '/profile/';
+                }
 
-                const timer = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= numericValue) {
-                        currentValue = numericValue;
-                        clearInterval(timer);
+                function viewStars() {
+                    alert('Redirecting to starred repositories...');
+                    // window.location.href = '/stars/';
+                }
+
+                function viewGists() {
+                    alert('Redirecting to your gists...');
+                    // window.location.href = '/gists/';
+                }
+
+                function upgradeAccount() {
+                    alert('Redirecting to upgrade page...');
+                    // window.location.href = '/upgrade/';
+                }
+
+                function viewBilling() {
+                    alert('Redirecting to billing page...');
+                    // window.location.href = '/billing/';
+                }
+
+                function viewHelp() {
+                    alert('Opening help center...');
+                    // window.open('/help/', '_blank');
+                }
+
+                function sendFeedback() {
+                    alert('Opening feedback form...');
+                    // window.location.href = '/feedback/';
+                }
+
+                function createRepo() {
+
+                }
+
+                function openRepo(repoName) {
+                    window.location.href = `repo.html?repo=${repoName}`;
+                }
+
+                // Search functionality
+                const searchInput = document.querySelector('.search-input');
+                searchInput.addEventListener('input', function (e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    console.log('Searching for:', searchTerm);
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    const sidebar = document.getElementById('sidebar');
+                    const toggle = document.querySelector('.mobile-sidebar-toggle');
+                    const profileMenu = document.getElementById('profileMenu');
+                    const profileBtn = document.querySelector('.profile-btn');
+
+                    // Close sidebar on mobile when clicking outside
+                    if (window.innerWidth <= 768 &&
+                        sidebar.classList.contains('open') &&
+                        !sidebar.contains(e.target) &&
+                        !toggle.contains(e.target)) {
+                        sidebar.classList.remove('open');
                     }
-                    stat.textContent = currentValue.toLocaleString() + suffix;
-                }, 50);
-            });
-        });
 
-        // Repo card hover effects
-        document.querySelectorAll('.repo-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-4px)';
-            });
+                    // Close profile menu when clicking outside
+                    if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+                        profileMenu.classList.remove('show');
+                    }
+                });
 
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
+                // Prevent profile menu from closing when clicking inside it
+                document.getElementById('profileMenu').addEventListener('click', function (e) {
+                    // Only close if clicking on a link (not the menu itself)
+                    if (e.target.classList.contains('profile-menu-item') || e.target.closest('.profile-menu-item')) {
+                        document.getElementById('profileMenu').classList.remove('show');
+                    }
+                });
 
-        // Update time elements periodically
-        setInterval(() => {
-            const timeElements = document.querySelectorAll('.repo-stat:last-child');
-            // This would update relative time stamps in a real application
-        }, 30000);
+                // Animated counter for stats
+                window.addEventListener('load', function () {
+                    const statValues = document.querySelectorAll('.stat-value');
+                    statValues.forEach(stat => {
+                        const finalValue = stat.textContent;
+                        const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+                        let currentValue = 0;
+                        const increment = Math.ceil(numericValue / 50);
+                        const suffix = finalValue.replace(/[\d,]/g, '');
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + K to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.querySelector('.search-input').focus();
-            }
-            
-            // Escape to close profile menu
-            if (e.key === 'Escape') {
-                document.getElementById('profileMenu').classList.remove('show');
-            }
-        });
+                        stat.textContent = '0' + suffix;
 
-        // Add notification system (optional)
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.textContent = message;
-            
-            // Style the notification
-            notification.style.cssText = `
+                        const timer = setInterval(() => {
+                            currentValue += increment;
+                            if (currentValue >= numericValue) {
+                                currentValue = numericValue;
+                                clearInterval(timer);
+                            }
+                            stat.textContent = currentValue.toLocaleString() + suffix;
+                        }, 50);
+                    });
+                });
+
+                // Repo card hover effects
+                document.querySelectorAll('.repo-card').forEach(card => {
+                    card.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateY(-4px)';
+                    });
+
+                    card.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateY(0)';
+                    });
+                });
+
+                // Update time elements periodically
+                setInterval(() => {
+                    const timeElements = document.querySelectorAll('.repo-stat:last-child');
+                    // This would update relative time stamps in a real application
+                }, 30000);
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', function (e) {
+                    // Ctrl/Cmd + K to focus search
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.querySelector('.search-input').focus();
+                    }
+
+                    // Escape to close profile menu
+                    if (e.key === 'Escape') {
+                        document.getElementById('profileMenu').classList.remove('show');
+                    }
+                });
+
+                // Add notification system (optional)
+                function showNotification(message, type = 'info') {
+                    const notification = document.createElement('div');
+                    notification.className = `notification notification-${type}`;
+                    notification.textContent = message;
+
+                    // Style the notification
+                    notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
@@ -1127,25 +977,24 @@
                 transform: translateX(100%);
                 transition: transform 0.3s ease;
             `;
-            
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
 
-        // Example usage of notification system
-        // showNotification('Welcome to CodeSync AI Dashboard!', 'success');
-    </script>
-{% endblock js %}
+                    document.body.appendChild(notification);
 
+                    // Animate in
+                    setTimeout(() => {
+                        notification.style.transform = 'translateX(0)';
+                    }, 100);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 300);
+                    }, 3000);
+                }
+
+                // Example usage of notification system
+                // showNotification('Welcome to CodeSync AI Dashboard!', 'success');
+            </script>
+            {% endblock js %}
